@@ -2,7 +2,7 @@
 
 ## Overview
 
-O caminho até o beta fechado é dirigido por risco: primeiro validamos o cérebro de IA contra o julgamento do dono (se as notas e sugestões não convergirem, nada mais importa), depois construímos a fundação multi-tenant com criptografia LGPD desde o schema, e em seguida atacamos o segundo maior risco técnico — a leitura resiliente do DOM do WhatsApp Web pela extensão. Com transcrições sincronizadas e prompts validados, entregamos o primeiro momento de valor de ponta a ponta ("Sugerir resposta"), fechamos o ciclo por conversa com o diagnóstico automático por inatividade e a marcação de desfecho, abrimos a visão do gestor sobre os dados que agora existem, e finalizamos com cobrança fina via Stripe, LGPD operacional e o portão de lançamento do beta.
+O caminho até o beta fechado começa pela fundação multi-tenant com criptografia LGPD desde o schema, ataca em seguida o maior risco técnico — a leitura resiliente do DOM do WhatsApp Web pela extensão — e entrega o primeiro momento de valor de ponta a ponta ("Sugerir resposta") usando um **cérebro provisório**: um prompt consultivo genérico de vendas jurídicas, já conforme OAB (sem promessa de resultado, sem captação vedada), construído por nós sem o documento do dono e arquitetado como artefato versionado no servidor para ser trocado sem mudança de código. Fechamos o ciclo por conversa com o diagnóstico automático por inatividade e a marcação de desfecho, abrimos a visão do gestor sobre os dados que agora existem, deixamos a operação pronta com cobrança via Stripe e LGPD operacional, e terminamos no portão do beta: converter o documento de metodologia da agência em prompts versionados + rubrica, construir o conjunto dourado avaliado pelo dono e medir a concordância IA vs especialista. **Trade-off aceito explicitamente:** a validação do core value (convergência da IA com o julgamento do dono) acontece por último, a pedido do dono, porque o documento de metodologia e as conversas reais avaliadas só estarão disponíveis no final do projeto.
 
 ## Phases
 
@@ -12,32 +12,20 @@ O caminho até o beta fechado é dirigido por risco: primeiro validamos o céreb
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Validação do Cérebro de IA** - Metodologia como prompts versionados + conjunto dourado + concordância IA vs especialista medida, sem extensão
-- [ ] **Phase 2: Fundação Backend Multi-Tenant** - Schema com criptografia e RLS, contas, papéis gestor/advogado e convites em região brasileira
-- [ ] **Phase 3: Extensão Chrome e Leitura do WhatsApp** - Painel lateral com login, extração resiliente do DOM e sincronização idempotente de transcrições
-- [ ] **Phase 4: Sugerir Resposta** - Primeiro valor de ponta a ponta: sugestão fundamentada na metodologia, com cópia em um clique e controle de custo
-- [ ] **Phase 5: Diagnóstico Automático e Desfecho** - Nota 0-10 + feedback por inatividade (server-side), gatilho manual e marcação fechado/perdido
-- [ ] **Phase 6: Painel do Gestor** - Notas, evolução, comparativo, transcrições com diagnóstico e taxa de conversão por advogado e equipe
-- [ ] **Phase 7: Cobrança, LGPD Operacional e Beta** - Stripe por assento com entitlements, retenção/exclusão/termos e tour de onboarding para o beta
+- [ ] **Phase 1: Fundação Backend Multi-Tenant** - Schema com criptografia e RLS, contas, papéis gestor/advogado e convites em região brasileira
+- [ ] **Phase 2: Extensão Chrome e Leitura do WhatsApp** - Painel lateral com login, extração resiliente do DOM e sincronização idempotente de transcrições
+- [ ] **Phase 3: Sugerir Resposta** - Primeiro valor de ponta a ponta: sugestão do cérebro provisório (consultivo, OAB-safe) com cópia em um clique e controle de custo
+- [ ] **Phase 4: Diagnóstico Automático e Desfecho** - Nota 0-10 + feedback por inatividade (server-side), gatilho manual e marcação fechado/perdido
+- [ ] **Phase 5: Painel do Gestor** - Notas, evolução, comparativo, transcrições com diagnóstico e taxa de conversão por advogado e equipe
+- [ ] **Phase 6: Cobrança e LGPD Operacional** - Stripe por assento com entitlements, retenção/exclusão/termos e tour de onboarding
+- [ ] **Phase 7: Cérebro de IA: Metodologia e Calibração (Portão do Beta)** - Metodologia real como prompts versionados + conjunto dourado + concordância IA vs especialista medida — portão de qualidade que abre o beta
 
 ## Phase Details
 
-### Phase 1: Validação do Cérebro de IA
-**Goal**: O dono (especialista) confirma que as sugestões e os diagnósticos da IA convergem com o julgamento dele sobre conversas reais — antes de qualquer investimento em extensão ou painel
-**Mode:** mvp
-**Depends on**: Nothing (first phase)
-**Requirements**: IA-01, IA-06, IA-07
-**Success Criteria** (what must be TRUE):
-  1. O dono roda o harness de avaliação sobre uma conversa real exportada e recebe sugestão + diagnóstico estruturado (nota 0-10, acertos, erros, melhorias) sem nenhuma extensão instalada
-  2. Existe um conjunto dourado de 20-50 conversas reais avaliadas pelo dono, e a concordância nota-IA vs nota-especialista é medida e reportada
-  3. O dono confirma, revisando as saídas, que sugestões e diagnósticos seguem a metodologia da agência e nunca contêm promessa de resultado nem captação vedada (OAB Provimento 205/2021 embutida na rubrica)
-  4. Prompts e rubrica existem como artefatos versionados armazenados só no servidor/repositório, e qualquer mudança pode ser re-avaliada contra o conjunto dourado (regressão)
-**Plans**: TBD
-
-### Phase 2: Fundação Backend Multi-Tenant
+### Phase 1: Fundação Backend Multi-Tenant
 **Goal**: Organizações, papéis e dados criptografados existem com isolamento entre tenants provado — a base sobre a qual tudo depende, com as decisões LGPD tomadas no schema, não depois
 **Mode:** mvp
-**Depends on**: Nothing (pode iniciar em paralelo à Phase 1)
+**Depends on**: Nothing (first phase)
 **Requirements**: AUTH-03, AUTH-04, AUTH-05, LGPD-01
 **Success Criteria** (what must be TRUE):
   1. Gestor faz login no painel web com e-mail/senha e vê apenas dados da própria organização; advogado logado não vê dados dos colegas
@@ -47,10 +35,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. Transcrições e análises são gravadas criptografadas em repouso, em região brasileira (São Paulo)
 **Plans**: TBD
 
-### Phase 3: Extensão Chrome e Leitura do WhatsApp
+### Phase 2: Extensão Chrome e Leitura do WhatsApp
 **Goal**: O advogado usa o painel lateral no WhatsApp Web com sessão persistente, e a conversa ativa é lida e sincronizada com o servidor de forma resiliente, somente-leitura e sem degradar a performance
 **Mode:** mvp
-**Depends on**: Phase 2
+**Depends on**: Phase 1
 **Requirements**: AUTH-01, AUTH-02, EXT-01, EXT-02, EXT-03, EXT-04, EXT-05, EXT-07, EXT-08
 **Success Criteria** (what must be TRUE):
   1. Advogado instala a extensão, faz login com e-mail/senha, a sessão persiste após reiniciar o Chrome e o logout está disponível
@@ -61,22 +49,23 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 **UI hint**: yes
 
-### Phase 4: Sugerir Resposta
-**Goal**: O advogado recebe, sob demanda, uma sugestão de resposta fundamentada na metodologia da agência e no estágio da conversa — o primeiro momento de valor de ponta a ponta, testável com o dono
+### Phase 3: Sugerir Resposta
+**Goal**: O advogado recebe, sob demanda, uma sugestão de resposta fundamentada em um cérebro provisório (prompt consultivo genérico de vendas jurídicas, já conforme OAB) e no estágio da conversa — o primeiro momento de valor de ponta a ponta, com o cérebro arquitetado como artefato versionado server-side, trocável pela metodologia real na Phase 7 sem mudança de código
 **Mode:** mvp
-**Depends on**: Phase 1, Phase 3
+**Depends on**: Phase 2
 **Requirements**: IA-02, IA-03
 **Success Criteria** (what must be TRUE):
-  1. Advogado clica em "Sugerir resposta" e recebe, com estado de carregamento visível, uma sugestão fundamentada na metodologia e no estágio da conversa (abertura/qualificação/objeção/fechamento)
+  1. Advogado clica em "Sugerir resposta" e recebe, com estado de carregamento visível, uma sugestão fundamentada no prompt provisório e no estágio da conversa (abertura/qualificação/objeção/fechamento), sem promessa de resultado nem captação vedada
   2. Advogado copia a sugestão com um clique e vê a confirmação "copiado!"
-  3. Chamadas de IA só funcionam para contas com entitlement ativo, e o consumo de tokens é medido por organização (com cache do prompt de metodologia protegendo o custo)
+  3. Chamadas de IA só funcionam para contas com entitlement ativo, e o consumo de tokens é medido por organização (com cache do prompt do cérebro protegendo o custo)
+  4. O cérebro (prompt + configuração) existe como artefato versionado armazenado só no servidor, e trocar a versão ativa não exige mudança de código nem atualização da extensão
 **Plans**: TBD
 **UI hint**: yes
 
-### Phase 5: Diagnóstico Automático e Desfecho
-**Goal**: Toda conversa termina com um diagnóstico calibrado (nota 0-10 + acertos/erros/melhorias) gerado automaticamente por inatividade, e o advogado registra o desfecho para rastrear conversão
+### Phase 4: Diagnóstico Automático e Desfecho
+**Goal**: Toda conversa termina com um diagnóstico (nota 0-10 + acertos/erros/melhorias) gerado automaticamente por inatividade a partir do cérebro provisório, e o advogado registra o desfecho para rastrear conversão — a calibração contra o julgamento do dono acontece na Phase 7
 **Mode:** mvp
-**Depends on**: Phase 4
+**Depends on**: Phase 3
 **Requirements**: IA-04, IA-05, IA-08, CONV-01
 **Success Criteria** (what must be TRUE):
   1. Após o período de inatividade, o diagnóstico (nota 0-10 + acertos, erros, melhorias + resumo) é gerado automaticamente no servidor — mesmo com o navegador do advogado fechado
@@ -87,10 +76,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 **UI hint**: yes
 
-### Phase 6: Painel do Gestor
-**Goal**: O gestor audita toda a operação sem acessar o WhatsApp de ninguém — notas, evolução, transcrições e conversão em um só lugar (liberado apenas com calibração aceita na Phase 1 e isolamento cross-tenant provado na Phase 2)
+### Phase 5: Painel do Gestor
+**Goal**: O gestor audita toda a operação sem acessar o WhatsApp de ninguém — notas, evolução, transcrições e conversão em um só lugar (liberado apenas com isolamento cross-tenant provado na Phase 1; as notas exibidas vêm do cérebro provisório até a calibração da Phase 7)
 **Mode:** mvp
-**Depends on**: Phase 5
+**Depends on**: Phase 4
 **Requirements**: DASH-01, DASH-02, DASH-03, DASH-04, DASH-05
 **Success Criteria** (what must be TRUE):
   1. Gestor vê a lista de conversas com nota, desfecho e data, filtrável por advogado, período, desfecho e faixa de nota
@@ -100,10 +89,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 **UI hint**: yes
 
-### Phase 7: Cobrança, LGPD Operacional e Beta
-**Goal**: A operação está pronta para o beta fechado: assinatura por assento funcionando, acesso controlado por entitlement, obrigações LGPD operacionais cumpridas e onboarding pronto para os primeiros advogados
+### Phase 6: Cobrança e LGPD Operacional
+**Goal**: A operação está pronta para o beta fechado: assinatura por assento funcionando, acesso controlado por entitlement, obrigações LGPD operacionais cumpridas e onboarding pronto para os primeiros advogados — mas o beta em si só abre após o portão de calibração da Phase 7
 **Mode:** mvp
-**Depends on**: Phase 6
+**Depends on**: Phase 5
 **Requirements**: BILL-01, BILL-02, BILL-03, LGPD-02, LGPD-03, LGPD-04, EXT-06
 **Success Criteria** (what must be TRUE):
   1. Gestor assina por assento via Stripe Checkout em BRL e gerencia assinatura, cartões e faturas pelo Customer Portal
@@ -114,6 +103,18 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 **UI hint**: yes
 
+### Phase 7: Cérebro de IA: Metodologia e Calibração (Portão do Beta)
+**Goal**: O documento de metodologia da agência vira prompts versionados + rubrica, o cérebro provisório é substituído pela metodologia real, e o dono (especialista) confirma que as sugestões e os diagnósticos da IA convergem com o julgamento dele sobre conversas reais — o portão final de qualidade que abre o beta fechado
+**Mode:** mvp
+**Depends on**: Phase 4 (pipeline de sugestão e diagnóstico em produção); executa por último e é o portão do beta
+**Requirements**: IA-01, IA-06, IA-07
+**Success Criteria** (what must be TRUE):
+  1. A metodologia documentada da agência existe como prompts + rubrica versionados armazenados só no servidor, e substitui o cérebro provisório por troca de artefato versionado, sem mudança de código
+  2. Existe um conjunto dourado de 20-50 conversas reais avaliadas pelo dono, e a concordância nota-IA vs nota-especialista é medida e reportada
+  3. O dono confirma, revisando as saídas, que sugestões e diagnósticos seguem a metodologia da agência e nunca contêm promessa de resultado nem captação vedada (OAB Provimento 205/2021 embutida na rubrica)
+  4. Qualquer mudança de prompt/rubrica pode ser re-avaliada contra o conjunto dourado (regressão), e o beta fechado só abre com a calibração aceita pelo dono
+**Plans**: TBD
+
 ## Progress
 
 **Execution Order:**
@@ -121,15 +122,16 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Validação do Cérebro de IA | 0/? | Not started | - |
-| 2. Fundação Backend Multi-Tenant | 0/? | Not started | - |
-| 3. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
-| 4. Sugerir Resposta | 0/? | Not started | - |
-| 5. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
-| 6. Painel do Gestor | 0/? | Not started | - |
-| 7. Cobrança, LGPD Operacional e Beta | 0/? | Not started | - |
+| 1. Fundação Backend Multi-Tenant | 0/? | Not started | - |
+| 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
+| 3. Sugerir Resposta | 0/? | Not started | - |
+| 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
+| 5. Painel do Gestor | 0/? | Not started | - |
+| 6. Cobrança e LGPD Operacional | 0/? | Not started | - |
+| 7. Cérebro de IA: Metodologia e Calibração (Portão do Beta) | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-07-04*
+*Revised: 2026-07-08 — validação do cérebro de IA movida para a última fase a pedido do dono (documento de metodologia e conversas avaliadas só disponíveis no final); fases de IA operam com cérebro provisório versionado até a calibração*
 *Coverage: 34/34 v1 requirements mapped*
-*Research flags: Phase 1 (calibração LLM-as-judge — forte candidata a AI-SPEC via /gsd-ai-integration-phase), Phase 3 (estrutura do DOM do WhatsApp Web e decisão DOM-only vs wa-js — spike hands-on durante o planejamento)*
+*Research flags: Phase 7 (calibração LLM-as-judge — forte candidata a AI-SPEC via /gsd-ai-integration-phase), Phase 2 (estrutura do DOM do WhatsApp Web e decisão DOM-only vs wa-js — spike hands-on durante o planejamento)*

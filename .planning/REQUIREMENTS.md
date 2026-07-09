@@ -104,44 +104,44 @@ Exclusões explícitas. Documentadas para prevenir scope creep.
 
 ## Traceability
 
-Mapeamento requisito → fase do roadmap. Atualizado na criação do roadmap (2026-07-04).
+Mapeamento requisito → fase do roadmap. Atualizado na revisão do roadmap (2026-07-08): validação do cérebro de IA movida para a Phase 7 (portão do beta); demais fases renumeradas.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 3 | Pending |
-| AUTH-02 | Phase 3 | Pending |
-| AUTH-03 | Phase 2 | Pending |
-| AUTH-04 | Phase 2 | Pending |
-| AUTH-05 | Phase 2 | Pending |
-| EXT-01 | Phase 3 | Pending |
-| EXT-02 | Phase 3 | Pending |
-| EXT-03 | Phase 3 | Pending |
-| EXT-04 | Phase 3 | Pending |
-| EXT-05 | Phase 3 | Pending |
-| EXT-06 | Phase 7 | Pending |
-| EXT-07 | Phase 3 | Pending |
-| EXT-08 | Phase 3 | Pending |
-| IA-01 | Phase 1 | Pending |
-| IA-02 | Phase 4 | Pending |
-| IA-03 | Phase 4 | Pending |
-| IA-04 | Phase 5 | Pending |
-| IA-05 | Phase 5 | Pending |
-| IA-06 | Phase 1 | Pending |
-| IA-07 | Phase 1 | Pending |
-| IA-08 | Phase 5 | Pending |
-| CONV-01 | Phase 5 | Pending |
-| DASH-01 | Phase 6 | Pending |
-| DASH-02 | Phase 6 | Pending |
-| DASH-03 | Phase 6 | Pending |
-| DASH-04 | Phase 6 | Pending |
-| DASH-05 | Phase 6 | Pending |
-| BILL-01 | Phase 7 | Pending |
-| BILL-02 | Phase 7 | Pending |
-| BILL-03 | Phase 7 | Pending |
-| LGPD-01 | Phase 2 | Pending |
-| LGPD-02 | Phase 7 | Pending |
-| LGPD-03 | Phase 7 | Pending |
-| LGPD-04 | Phase 7 | Pending |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| EXT-01 | Phase 2 | Pending |
+| EXT-02 | Phase 2 | Pending |
+| EXT-03 | Phase 2 | Pending |
+| EXT-04 | Phase 2 | Pending |
+| EXT-05 | Phase 2 | Pending |
+| EXT-06 | Phase 6 | Pending |
+| EXT-07 | Phase 2 | Pending |
+| EXT-08 | Phase 2 | Pending |
+| IA-01 | Phase 7 | Pending |
+| IA-02 | Phase 3 | Pending |
+| IA-03 | Phase 3 | Pending |
+| IA-04 | Phase 4 | Pending |
+| IA-05 | Phase 4 | Pending |
+| IA-06 | Phase 7 | Pending |
+| IA-07 | Phase 7 | Pending |
+| IA-08 | Phase 4 | Pending |
+| CONV-01 | Phase 4 | Pending |
+| DASH-01 | Phase 5 | Pending |
+| DASH-02 | Phase 5 | Pending |
+| DASH-03 | Phase 5 | Pending |
+| DASH-04 | Phase 5 | Pending |
+| DASH-05 | Phase 5 | Pending |
+| BILL-01 | Phase 6 | Pending |
+| BILL-02 | Phase 6 | Pending |
+| BILL-03 | Phase 6 | Pending |
+| LGPD-01 | Phase 1 | Pending |
+| LGPD-02 | Phase 6 | Pending |
+| LGPD-03 | Phase 6 | Pending |
+| LGPD-04 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 34 total (contagem corrigida na criação do roadmap; nota anterior dizia 30)
@@ -150,4 +150,4 @@ Mapeamento requisito → fase do roadmap. Atualizado na criação do roadmap (20
 
 ---
 *Requirements defined: 2026-07-04*
-*Last updated: 2026-07-04 after roadmap creation (traceability filled)*
+*Last updated: 2026-07-08 after roadmap revision (traceability renumbered — AI brain validation moved to Phase 7)*

@@ -70,6 +70,7 @@ O advogado recebe orientação de IA que efetivamente aumenta a conversão de le
 | Armazenar transcrições completas com salvaguardas LGPD | Necessário para o painel do gestor (reler atendimentos); criptografia + retenção + termos | — Pending |
 | SaaS com Stripe desde a v1, beta fechado primeiro | Validar com clientes da agência antes de abrir ao mercado | — Pending |
 | Painel de gestão web separado da extensão | Gestor audita todos os advogados sem acessar o WhatsApp de cada um | — Pending |
+| Metodologia e calibração movidas para a última fase (decisão do dono, 2026-07-08) | Documento da metodologia e conversas avaliadas só estarão disponíveis ao final; plataforma é construída com cérebro provisório (vendas consultivas jurídicas, OAB-safe) trocável sem mudança de código. Trade-off aceito: a validação do valor central (convergência IA vs julgamento do dono) acontece por último, como portão do beta | ⚠️ Revisit |
 
 ## Evolution
 
@@ -89,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-04 after initialization*
+*Last updated: 2026-07-08 after roadmap reordering (methodology/calibration moved to final phase)*
