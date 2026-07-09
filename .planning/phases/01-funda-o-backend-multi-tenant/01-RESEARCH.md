@@ -548,19 +548,24 @@ await resend.emails.send({
 | A7 | `basejump-supabase_test_helpers` instala-se copiando o SQL para `supabase/tests/` (ou via dbdev) e é compatível com a CLI 2.x atual | Validation | Se incompatível, escrever helpers próprios (~50 linhas de SQL) ou usar Vitest+supabase-js como harness principal dos testes cross-tenant |
 | A8 | Validade de 7 dias para convite e 1h para link de reset são aceitáveis (discretion explícita do CONTEXT.md) | Pattern 3/4 | Nenhum — coberto pela discretion |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Acesso DNS ao domínio elitejuris.com.br (SPF/DKIM para Resend)**
+Todas as questões abaixo foram absorvidas pelos planos da fase — nenhuma permanece aberta.
+
+1. **Acesso DNS ao domínio elitejuris.com.br (SPF/DKIM para Resend)** — RESOLVED
    - What we know: D-13 exige remetente `nao-responda@elitejuris.com.br`; Resend exige verificação de domínio via DNS.
    - What's unclear: quem configura os registros DNS e quando.
    - Recommendation: planner deve incluir `checkpoint:human-verify` — o dono (ou responsável pelo domínio) adiciona os registros; até lá, testes usam Mailpit local/sandbox.
-2. **Criptografia por coluna é exigência real do dono ou basta a da plataforma? (ver A1)**
+   - **Resolução: absorvida no plano 01-05** — Resend declarado como `user_setup` OPCIONAL (a verificação do domínio depende do responsável pelo DNS) com o driver `console` como default (`EMAIL_DRIVER=console`), então o fluxo de convite funciona sem Resend. A ativação do Resend está registrada como pendência obrigatória para o beta no checkpoint/SUMMARY do plano 01-08.
+2. **Criptografia por coluna é exigência real do dono ou basta a da plataforma? (ver A1)** — RESOLVED
    - What we know: LGPD-01 diz "criptografadas em repouso"; plataforma cobre por default; pgsodium deprecado.
    - What's unclear: expectativa do dono sobre "criptografia" (marketing/juridicamente pode querer mais).
    - Recommendation: seguir com plataforma-only na v1 e registrar a decisão para o dono confirmar no verify-work.
-3. **Onde roda o e-mail de convite em dev/CI sem vazar e-mails reais**
+   - **Resolução: absorvida pela Assumption A1** — v1 segue com criptografia da plataforma (AES-256 em repouso do Supabase), sem criptografia por coluna; a decisão fica registrada no SUMMARY do plano 01-02 para o dono confirmar no verify-work.
+3. **Onde roda o e-mail de convite em dev/CI sem vazar e-mails reais** — RESOLVED
    - What we know: `supabase start` inclui Mailpit para e-mails do Auth; e-mails do Resend (convite) são chamadas de API externas.
    - Recommendation: abstrair o envio atrás de uma interface com driver `console/mailpit` em dev e `resend` em prod (env var), permitindo testes de integração sem rede.
+   - **Resolução: absorvida no plano 01-05** — envio abstraído atrás de `sendEmail()` com driver selecionado por env (`EMAIL_DRIVER=console` como default em dev/CI, `resend` em produção), permitindo testes de integração sem rede.
 
 ## Environment Availability
 
