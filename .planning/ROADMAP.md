@@ -33,7 +33,17 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Qualquer usuário redefine a senha via link enviado por e-mail
   4. Testes cross-tenant automatizados (duas organizações) passam em CI, provando que nenhuma consulta vaza dados entre organizações
   5. Transcrições e análises são gravadas criptografadas em repouso, em região brasileira (São Paulo)
-**Plans**: TBD
+**Plans:** 8 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Scaffold do monorepo pnpm + auditoria de pacotes + teste de esqueleto vermelho
+- [ ] 01-02-PLAN.md — Schema multi-tenant com RLS + projeto Supabase sa-east-1 + db push + seed
+- [ ] 01-03-PLAN.md — Prova de isolamento cross-tenant: suíte pgTAP + CI GitHub Actions
+- [ ] 01-04-PLAN.md — Login do painel, gate de papéis (D-07) e dashboard mínimo com leitura real
+- [ ] 01-05-PLAN.md — Convites ponta a ponta e tela de equipe (7 dias, reenviar/cancelar, reativação)
+- [ ] 01-06-PLAN.md — Redefinição de senha via link por e-mail (fluxo PKCE nativo)
+- [ ] 01-07-PLAN.md — Remoção com revogação imediata + interface admin do super-admin
+- [ ] 01-08-PLAN.md — Deploy Vercel (gru1) + verificação humana do esqueleto no ar
 
 ### Phase 2: Extensão Chrome e Leitura do WhatsApp
 **Goal**: O advogado usa o painel lateral no WhatsApp Web com sessão persistente, e a conversa ativa é lida e sincronizada com o servidor de forma resiliente, somente-leitura e sem degradar a performance
