@@ -1,0 +1,14 @@
+{
+  "name": "copiloto-juridico-whatsapp",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "build": "pnpm --filter web build",
+    "test": "pnpm -r vitest run"
+  },
+  "devDependencies": {
+    "supabase": "2.109.1",
+    "typescript": "~5.9.3"
+  }
+}
