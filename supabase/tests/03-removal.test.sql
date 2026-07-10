@@ -1,5 +1,5 @@
 begin;
-\i supabase/tests/00-helpers.sql
+\i helpers/00-helpers.inc
 
 select plan(4);
 
