@@ -1,6 +1,18 @@
 import { LoginForm } from "./login-form";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ created?: string; senha?: string }>;
+}) {
+  const params = searchParams ? await searchParams : {};
+  const successMessage =
+    params.senha === "alterada"
+      ? "Senha alterada. Entre com a nova senha."
+      : params.created === "1"
+        ? "Conta criada. Entre com seu e-mail e senha."
+        : null;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-12 text-zinc-950">
       <section className="w-full max-w-sm">
@@ -13,6 +25,11 @@ export default function LoginPage() {
             Acesse os atendimentos, diagnósticos e equipe da sua organização.
           </p>
         </div>
+        {successMessage ? (
+          <p className="mb-5 rounded border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-800">
+            {successMessage}
+          </p>
+        ) : null}
         <LoginForm />
       </section>
     </main>
