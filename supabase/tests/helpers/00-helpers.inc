@@ -65,7 +65,7 @@ begin
     last_sign_in_at
   )
   values (
-    user_id::text,
+    user_id,
     user_id,
     user_email,
     'email',
