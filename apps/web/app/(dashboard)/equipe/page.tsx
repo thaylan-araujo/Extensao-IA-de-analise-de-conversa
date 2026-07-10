@@ -1,5 +1,6 @@
 import { createClient } from "../../../lib/supabase/server";
 import { InviteForm } from "./invite-form";
+import { MemberActions } from "./member-actions";
 import { PendingInvites } from "./pending-invites";
 
 function roleLabel(role: string) {
@@ -13,6 +14,9 @@ function daysRemaining(expiresAt: string) {
 
 export default async function EquipePage() {
   const supabase = await createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
   const [{ data: members }, { data: invitations }] = await Promise.all([
     supabase
       .from("profiles")
@@ -55,6 +59,7 @@ export default async function EquipePage() {
                 <th className="px-4 py-3 font-medium">Nome</th>
                 <th className="px-4 py-3 font-medium">Papel</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -74,6 +79,16 @@ export default async function EquipePage() {
                     >
                       {member.status === "removed" ? "removido" : "ativo"}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {member.status === "active" && member.user_id !== user?.id ? (
+                      <MemberActions
+                        fullName={member.full_name}
+                        userId={member.user_id}
+                      />
+                    ) : (
+                      <span className="text-xs text-zinc-400">—</span>
+                    )}
                   </td>
                 </tr>
               ))}

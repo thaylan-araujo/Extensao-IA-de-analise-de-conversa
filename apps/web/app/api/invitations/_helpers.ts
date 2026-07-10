@@ -60,7 +60,10 @@ async function createRequestSupabase(request: NextRequest | Request) {
   });
 }
 
-export async function getActorContext(request: NextRequest | Request) {
+export async function getActorContext(
+  request: NextRequest | Request,
+  options?: { forbiddenMessage?: string }
+) {
   const supabase = await createRequestSupabase(request);
   const token = bearerToken(request);
   const {
@@ -82,7 +85,12 @@ export async function getActorContext(request: NextRequest | Request) {
   }
 
   if (profile.role !== "gestor" && profile.role !== "super_admin") {
-    return { error: jsonError("Apenas gestor pode gerenciar convites.", 403) };
+    return {
+      error: jsonError(
+        options?.forbiddenMessage ?? "Apenas gestor pode gerenciar convites.",
+        403
+      )
+    };
   }
 
   return {
