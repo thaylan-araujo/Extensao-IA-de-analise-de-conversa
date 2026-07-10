@@ -42,7 +42,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Scaffold do monorepo pnpm + auditoria de pacotes + teste de esqueleto vermelho
+- [x] 01-01-PLAN.md — Scaffold do monorepo pnpm + auditoria de pacotes + teste de esqueleto vermelho
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fundação Backend Multi-Tenant | 0/? | Not started | - |
+| 1. Fundação Backend Multi-Tenant | 1/8 | In progress | - |
 | 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
