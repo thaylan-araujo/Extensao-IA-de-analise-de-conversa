@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { Database } from "@copiloto/shared";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 

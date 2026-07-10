@@ -1,6 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { createClient } from "@supabase/supabase-js";
+import { beforeAll, describe, expect, it } from "vitest";
 
 import { generateInviteToken, hashToken } from "../lib/invitations/token";
+import { createAdminClient } from "../lib/supabase/admin";
 
 const hasHostedSupabaseSecrets =
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
@@ -25,6 +27,19 @@ async function jsonRequest(path: string, body: unknown, init?: RequestInit) {
   });
 }
 
+let gestorAccessToken: string | null = null;
+let advogadoAccessToken: string | null = null;
+
+function authenticatedInit(init?: RequestInit): RequestInit {
+  return {
+    ...init,
+    headers: {
+      ...(init?.headers ?? {}),
+      ...(gestorAccessToken ? { authorization: `Bearer ${gestorAccessToken}` } : {})
+    }
+  };
+}
+
 describe("invite token utilities", () => {
   it("generates a base64url token and stores only a sha256 hash", () => {
     const { token, tokenHash } = generateInviteToken();
@@ -45,12 +60,58 @@ describe("invite token utilities", () => {
 });
 
 describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted Supabase", () => {
+  beforeAll(async () => {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: process.env.SEED_GESTOR_EMAIL!,
+      password: process.env.SEED_USER_PASSWORD!
+    });
+
+    if (error || !data.session?.access_token) {
+      throw error ?? new Error("Missing gestor access token");
+    }
+
+    gestorAccessToken = data.session.access_token;
+
+    const { data: advogadoData, error: advogadoError } =
+      await supabase.auth.signInWithPassword({
+        email: process.env.SEED_ADVOGADO_EMAIL!,
+        password: process.env.SEED_USER_PASSWORD!
+      });
+
+    if (advogadoError || !advogadoData.session?.access_token) {
+      throw advogadoError ?? new Error("Missing advogado access token");
+    }
+
+    advogadoAccessToken = advogadoData.session.access_token;
+  });
+
+  it("returns 403 when an advogado tries to create an invitation", async () => {
+    const { POST } = await import("../app/api/invitations/route");
+    const response = await POST(
+      await jsonRequest("/api/invitations", {
+        email: uniqueEmail("forbidden"),
+        role: "advogado"
+      }, {
+        headers: {
+          authorization: `Bearer ${advogadoAccessToken}`
+        }
+      })
+    );
+
+    expect(response.status).toBe(403);
+  });
+
   it("creates a pending invitation for 7 days with lowercase email", async () => {
     const { POST } = await import("../app/api/invitations/route");
     const request = await jsonRequest("/api/invitations", {
       email: uniqueEmail("create").toUpperCase(),
       role: "advogado"
-    });
+    }, authenticatedInit());
 
     const response = await POST(request);
     const payload = await response.json();
@@ -67,9 +128,19 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     const { POST } = await import("../app/api/invitations/route");
     const email = uniqueEmail("duplicate");
 
-    await POST(await jsonRequest("/api/invitations", { email, role: "advogado" }));
+    await POST(
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
+    );
     const response = await POST(
-      await jsonRequest("/api/invitations", { email, role: "advogado" })
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
     );
 
     expect(response.status).toBe(409);
@@ -82,7 +153,11 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     );
     const email = uniqueEmail("accept");
     const createResponse = await createInvitation(
-      await jsonRequest("/api/invitations", { email, role: "advogado" })
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
     );
     const created = await createResponse.json();
 
@@ -105,7 +180,7 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
 
     const response = await POST(
       await jsonRequest("/api/invitations/accept", {
-        token: "invalid-token",
+        token: "invalid-token-that-is-long-enough",
         fullName: "Pessoa Convidada",
         password: "senha-segura-123"
       })
@@ -121,12 +196,21 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     );
     const email = uniqueEmail("resend");
     const createResponse = await createInvitation(
-      await jsonRequest("/api/invitations", { email, role: "advogado" })
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
     );
     const created = await createResponse.json();
 
     const response = await resendInvitation(
-      await jsonRequest(`/api/invitations/${created.invitation.id}/resend`, {}, {})
+      await jsonRequest(
+        `/api/invitations/${created.invitation.id}/resend`,
+        {},
+        authenticatedInit()
+      ),
+      { params: Promise.resolve({ id: created.invitation.id }) }
     );
     const payload = await response.json();
 
@@ -140,12 +224,21 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     const { DELETE } = await import("../app/api/invitations/[id]/route");
     const email = uniqueEmail("cancel");
     const createResponse = await createInvitation(
-      await jsonRequest("/api/invitations", { email, role: "advogado" })
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
     );
     const created = await createResponse.json();
 
     const response = await DELETE(
-      await jsonRequest(`/api/invitations/${created.invitation.id}`, {}, { method: "DELETE" })
+      await jsonRequest(
+        `/api/invitations/${created.invitation.id}`,
+        {},
+        authenticatedInit({ method: "DELETE" })
+      ),
+      { params: Promise.resolve({ id: created.invitation.id }) }
     );
     const payload = await response.json();
 
@@ -158,20 +251,56 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     const { POST: acceptInvitation } = await import(
       "../app/api/invitations/accept/route"
     );
+    const admin = createAdminClient();
     const email = uniqueEmail("reactivate");
     const createResponse = await createInvitation(
-      await jsonRequest("/api/invitations", { email, role: "advogado" })
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
     );
     const created = await createResponse.json();
 
-    const response = await acceptInvitation(
+    const firstAcceptResponse = await acceptInvitation(
       await jsonRequest("/api/invitations/accept", {
         token: created.token,
         fullName: "Pessoa Reativada",
         password: "senha-nova-123"
       })
     );
+    const firstAccept = await firstAcceptResponse.json();
+
+    expect(firstAcceptResponse.status).toBe(200);
+
+    await admin
+      .from("profiles")
+      .update({
+        removed_at: new Date().toISOString(),
+        status: "removed"
+      })
+      .eq("user_id", firstAccept.profile.user_id);
+
+    const secondCreateResponse = await createInvitation(
+      await jsonRequest(
+        "/api/invitations",
+        { email, role: "advogado" },
+        authenticatedInit()
+      )
+    );
+    const secondCreated = await secondCreateResponse.json();
+    const response = await acceptInvitation(
+      await jsonRequest("/api/invitations/accept", {
+        token: secondCreated.token,
+        fullName: "Pessoa Reativada",
+        password: "senha-nova-456"
+      })
+    );
+    const secondAccept = await response.json();
 
     expect(response.status).toBe(200);
+    expect(secondAccept.profile.user_id).toBe(firstAccept.profile.user_id);
+    expect(secondAccept.profile.status).toBe("active");
+    expect(secondAccept.profile.removed_at).toBeNull();
   });
 });
