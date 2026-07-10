@@ -55,7 +55,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-05-PLAN.md — Convites ponta a ponta e tela de equipe (7 dias, reenviar/cancelar, reativação)
+- [x] 01-05-PLAN.md — Convites ponta a ponta e tela de equipe (7 dias, reenviar/cancelar, reativação)
 - [ ] 01-06-PLAN.md — Redefinição de senha via link por e-mail (fluxo PKCE nativo)
 
 **Wave 5** *(blocked on Wave 4 completion)*
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fundação Backend Multi-Tenant | 4/8 | In progress | - |
+| 1. Fundação Backend Multi-Tenant | 5/8 | In progress | - |
 | 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
