@@ -5,10 +5,15 @@
   "packageManager": "pnpm@10.0.0",
   "scripts": {
     "build": "pnpm --filter web build",
+    "db:seed": "tsx scripts/seed.ts",
     "test": "pnpm -r vitest run"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.110.1"
   },
   "devDependencies": {
     "supabase": "2.109.1",
+    "tsx": "4.21.0",
     "typescript": "~5.9.3"
   }
 }
