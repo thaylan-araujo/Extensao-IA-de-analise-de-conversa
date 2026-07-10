@@ -46,7 +46,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — Schema multi-tenant com RLS + projeto Supabase sa-east-1 + db push + seed
+- [x] 01-02-PLAN.md — Schema multi-tenant com RLS + projeto Supabase sa-east-1 + db push + seed
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fundação Backend Multi-Tenant | 1/8 | In progress | - |
+| 1. Fundação Backend Multi-Tenant | 2/8 | In progress | - |
 | 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
