@@ -50,7 +50,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-03-PLAN.md — Prova de isolamento cross-tenant: suíte pgTAP + CI GitHub Actions
+- [x] 01-03-PLAN.md — Prova de isolamento cross-tenant: suíte pgTAP + CI GitHub Actions
 - [ ] 01-04-PLAN.md — Login do painel, gate de papéis (D-07) e dashboard mínimo com leitura real
 
 **Wave 4** *(blocked on Wave 3 completion)*
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fundação Backend Multi-Tenant | 2/8 | In progress | - |
+| 1. Fundação Backend Multi-Tenant | 3/8 | In progress | - |
 | 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
