@@ -50,6 +50,8 @@ union all select 'advogado_2', advogado_2 from users
 union all select 'conv_1', id from conv_1
 union all select 'conv_2', id from conv_2;
 
+grant select on fixture to authenticated;
+
 select tests.authenticate_as('advogado_1');
 select is((select count(*) from public.conversations), 1::bigint, 'advogado ve somente a propria conversa');
 select is((select count(*) from public.profiles), 1::bigint, 'advogado ve somente o proprio profile');
@@ -57,26 +59,22 @@ select is((select count(*) from public.invitations), 0::bigint, 'advogado nao le
 select throws_ok(
   $$ insert into public.conversations(organization_id, profile_id, contact_name)
      values ((select id from fixture where key = 'org_b'), (select id from fixture where key = 'advogado_1'), 'Lead proibido') $$,
-  '42501',
-  'advogado nao insere conversa em outra org'
+  '42501'
 );
 select throws_ok(
   $$ insert into public.conversations(organization_id, profile_id, contact_name)
      values ((select id from fixture where key = 'org_a'), (select id from fixture where key = 'advogado_2'), 'Lead de colega') $$,
-  '42501',
-  'advogado nao insere conversa para outro usuario'
+  '42501'
 );
 select throws_ok(
   $$ insert into public.diagnostics(conversation_id, organization_id, score)
      values ((select id from fixture where key = 'conv_1'), (select id from fixture where key = 'org_a'), 8) $$,
-  '42501',
-  'authenticated nao insere diagnostics'
+  '42501'
 );
 select throws_ok(
   $$ insert into public.audit_log(actor_user_id, action, organization_id)
      values ((select id from fixture where key = 'advogado_1'), 'test', (select id from fixture where key = 'org_a')) $$,
-  '42501',
-  'authenticated nao insere audit_log'
+  '42501'
 );
 
 reset role;

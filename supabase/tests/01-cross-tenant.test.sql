@@ -57,6 +57,8 @@ union all select 'gestor_b', gestor_b from users
 union all select 'conv_a', id from conv_a
 union all select 'conv_b', id from conv_b;
 
+grant select on fixture to authenticated;
+
 select tests.authenticate_as('gestor_a');
 select is((select count(*) from public.organizations), 1::bigint, 'gestor A ve somente a propria organizacao');
 select is((select count(*) from public.conversations), 1::bigint, 'gestor A ve somente a conversa da propria org');

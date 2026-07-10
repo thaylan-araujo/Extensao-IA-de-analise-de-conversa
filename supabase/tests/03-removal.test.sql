@@ -31,6 +31,8 @@ union all select 'gestor', gestor from users
 union all select 'advogado', advogado from users
 union all select 'conv', id from conv;
 
+grant select on fixture to authenticated;
+
 select tests.authenticate_as('advogado_removed');
 select is((select count(*) from public.conversations), 1::bigint, 'advogado ativo ve a propria conversa');
 
