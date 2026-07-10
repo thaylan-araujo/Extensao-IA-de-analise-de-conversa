@@ -1,0 +1,13 @@
+<h2>Redefinicao de senha</h2>
+
+<p>Voce solicitou a redefinicao da sua senha de acesso ao ambiente Elite Juris.</p>
+
+<p>Para criar uma nova senha, acesse o link abaixo. Ele e valido por 1 hora.</p>
+
+<p>
+  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/nova-senha">
+    Redefinir minha senha
+  </a>
+</p>
+
+<p>Se voce nao solicitou essa alteracao, ignore este e-mail.</p>
