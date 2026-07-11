@@ -1,10 +1,11 @@
 ---
 phase: 02
 slug: extens-o-chrome-e-leitura-do-whatsapp
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-07-11
+reviewed_at: 2026-07-11
 ---
 
 # Phase 02 — UI Design Contract
@@ -166,14 +167,14 @@ Regras: mensagens de erro sempre dizem o problema + o próximo passo; nenhuma me
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS (1 FLAG não-bloqueante: rótulo "Cancelar" no diálogo de logout)
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved (2026-07-11)
 
 ---
 
