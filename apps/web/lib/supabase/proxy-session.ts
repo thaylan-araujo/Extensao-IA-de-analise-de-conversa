@@ -10,7 +10,11 @@ const PUBLIC_ROUTE_PREFIXES = [
   "/nova-senha",
   "/convite",
   "/auth",
-  "/sem-acesso"
+  "/sem-acesso",
+  // Rotas de API cuidam da própria autenticação (retornam 401/403 em JSON).
+  // Sem isso, chamadas anônimas legítimas (ex.: aceite de convite) eram
+  // redirecionadas para /login e o cliente recebia HTML no lugar de JSON.
+  "/api"
 ];
 
 function startsWithRoute(pathname: string, route: string) {

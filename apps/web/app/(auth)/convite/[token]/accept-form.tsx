@@ -15,21 +15,26 @@ export function AcceptForm({ email, token }: { email: string; token: string }) {
     setError(null);
     setIsLoading(true);
 
-    const response = await fetch("/api/invitations/accept", {
-      body: JSON.stringify({ fullName, password, token }),
-      headers: { "content-type": "application/json" },
-      method: "POST"
-    });
-    const payload = await response.json();
+    try {
+      const response = await fetch("/api/invitations/accept", {
+        body: JSON.stringify({ fullName, password, token }),
+        headers: { "content-type": "application/json" },
+        method: "POST"
+      });
+      const payload = await response.json().catch(() => null);
 
-    if (!response.ok) {
-      setError(payload.error ?? "Não foi possível aceitar o convite.");
+      if (!response.ok || !payload) {
+        setError(payload?.error ?? "Não foi possível aceitar o convite. Tente novamente.");
+        setIsLoading(false);
+        return;
+      }
+
+      router.push("/login?created=1");
+      router.refresh();
+    } catch {
+      setError("Falha de conexão. Verifique sua internet e tente novamente.");
       setIsLoading(false);
-      return;
     }
-
-    router.push("/login?created=1");
-    router.refresh();
   }
 
   return (
