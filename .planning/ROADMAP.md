@@ -13,7 +13,7 @@ O caminho até o beta fechado começa pela fundação multi-tenant com criptogra
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Fundação Backend Multi-Tenant** - Schema com criptografia e RLS, contas, papéis gestor/advogado e convites em região brasileira
+- [x] **Phase 1: Fundação Backend Multi-Tenant** - Schema com criptografia e RLS, contas, papéis gestor/advogado e convites em região brasileira (completed 2026-07-11)
 - [ ] **Phase 2: Extensão Chrome e Leitura do WhatsApp** - Painel lateral com login, extração resiliente do DOM e sincronização idempotente de transcrições
 - [ ] **Phase 3: Sugerir Resposta** - Primeiro valor de ponta a ponta: sugestão do cérebro provisório (consultivo, OAB-safe) com cópia em um clique e controle de custo
 - [ ] **Phase 4: Diagnóstico Automático e Desfecho** - Nota 0-10 + feedback por inatividade (server-side), gatilho manual e marcação fechado/perdido
@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Testes cross-tenant automatizados (duas organizações) passam em CI, provando que nenhuma consulta vaza dados entre organizações
   5. Transcrições e análises são gravadas criptografadas em repouso, em região brasileira (São Paulo)
 
-**Plans:** 7/8 plans executed
+**Plans:** 8/8 plans complete
 
 Plans:
 **Wave 1**
@@ -64,7 +64,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 01-08-PLAN.md — Deploy Vercel (gru1) + verificação humana do esqueleto no ar
+- [x] 01-08-PLAN.md — Deploy Vercel (gru1) + verificação humana do esqueleto no ar
 
 ### Phase 2: Extensão Chrome e Leitura do WhatsApp
 
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fundação Backend Multi-Tenant | 7/8 | In Progress|  |
+| 1. Fundação Backend Multi-Tenant | 8/8 | Complete   | 2026-07-11 |
 | 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |

@@ -57,7 +57,7 @@ Requisitos da versão inicial (beta fechado com clientes da agência). Cada um m
 
 ### LGPD & Compliance (LGPD)
 
-- [ ] **LGPD-01**: Transcrições e análises são armazenadas criptografadas em repouso, em região brasileira (São Paulo)
+- [x] **LGPD-01**: Transcrições e análises são armazenadas criptografadas em repouso, em região brasileira (São Paulo)
 - [ ] **LGPD-02**: Política de retenção definida com expurgo automático de dados vencidos
 - [ ] **LGPD-03**: Usuários aceitam termos de uso e política de privacidade antes de usar (papéis controlador/operador claros)
 - [ ] **LGPD-04**: Exclusão de dados sob demanda com cascata completa (transcrições, análises e logs)
@@ -138,7 +138,7 @@ Mapeamento requisito → fase do roadmap. Atualizado na revisão do roadmap (202
 | BILL-01 | Phase 6 | Pending |
 | BILL-02 | Phase 6 | Pending |
 | BILL-03 | Phase 6 | Pending |
-| LGPD-01 | Phase 1 | Pending |
+| LGPD-01 | Phase 1 | Complete |
 | LGPD-02 | Phase 6 | Pending |
 | LGPD-03 | Phase 6 | Pending |
 | LGPD-04 | Phase 6 | Pending |

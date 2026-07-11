@@ -5,16 +5,16 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: funda-o-backend-multi-tenant
 status: executing
-stopped_at: Phase 2 context gathered
-last_updated: "2026-07-11T00:07:16.936Z"
-last_activity: 2026-07-10
-last_activity_desc: Phase 01 execution resumed (wave continue)
+stopped_at: Completed 01-08-PLAN.md — Fase 1 completa (8/8), checkpoint humano aprovado
+last_updated: "2026-07-11T12:24:53.505Z"
+last_activity: 2026-07-11
+last_activity_desc: Plan 01-08 complete — Phase 01 done (8/8), human checkpoint approved
 progress:
   total_phases: 7
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 8
-  completed_plans: 7
-  percent: 0
+  completed_plans: 8
+  percent: 14
 ---
 
 # Project State
@@ -28,34 +28,35 @@ See: .planning/PROJECT.md (updated 2026-07-04)
 
 ## Current Position
 
-Phase: 01 (funda-o-backend-multi-tenant) — EXECUTING
-Plan: 7 of 8 complete
-Status: Ready to execute
-Last activity: 2026-07-10 — Phase 01 execution resumed (wave continue)
+Phase: 01 (funda-o-backend-multi-tenant) — COMPLETE (8/8 plans)
+Plan: 8 of 8 complete
+Status: Phase 01 complete — ready to plan Phase 02
+Last activity: 2026-07-11 — Plan 01-08 complete (deploy + checkpoint humano aprovado)
 
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
+- Total plans completed: 8
 - Average duration: -
-- Total execution time: 0 hours
+- Total execution time: -
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 6 | 8 | - |
+| 01 | 8 | 8 | - |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-02, 01-03, 01-04, 01-05, 01-06
+- Last 5 plans: 01-04, 01-05, 01-06, 01-07, 01-08
 - Trend: -
 
 *Updated after each plan completion*
 | Phase 01 P07 | 15m | 3 tasks | 13 files |
+| Phase 01 P08 | 11h30m | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -72,10 +73,15 @@ Recent decisions affecting current work:
 - [Roadmap]: Painel do gestor (Phase 5) gated por testes cross-tenant em CI (Phase 1); as notas exibidas vêm do cérebro provisório até a calibração da Phase 7
 - [Roadmap]: Cobrança e LGPD operacional (Phase 6) deixam a operação pronta, mas o beta só abre com a calibração aceita na Phase 7
 - [Phase 01]: 01-07: Revogação de sessão na remoção = ban via updateUserById (A5) — admin.signOut exige o JWT do alvo, indisponível server-side; ban bloqueia refresh e RLS por lookup nega leituras imediatamente — provado sem refresh no teste 2
+- [Phase 01]: 01-08: Role gate do proxy usa getClaims() (claims do custom_access_token_hook não aparecem em getUser); RLS de profiles precisa de policy SELECT para supabase_auth_admin ou o hook falha silenciosamente
+- [Phase 01]: 01-08: /auth/confirm aceita fluxo ?code= do template padrão do Supabase (plano Free não permite template custom com SMTP default) além de token_hash
+- [Phase 01]: 01-08: Rotas /api são públicas no proxy — cada Route Handler cuida da própria auth (evita redirect HTML em chamadas anônimas de API)
 
 ### Pending Todos
 
-None yet.
+- [01-08] Ativar Resend: verificar domínio elitejuris.com.br e trocar EMAIL_DRIVER=resend na Vercel (criterion "convite por e-mail real" só fecha no beta após isso; hoje o link sai nos logs da Vercel)
+- [01-08] Reativar `[auth.email.template.recovery]` no config.toml quando houver SMTP próprio (plano Free não permite template custom com SMTP default)
+- [01-08] Senha do gestor demo divergiu do seed (trocada pelo dono no passo 6 do checkpoint): atualizar SEED_USER_PASSWORD no .env.local ou restaurar a senha seed via service role — suíte invitations.test.ts falha no login seed até lá
 
 ### Blockers/Concerns
 
@@ -93,6 +99,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T00:06:25.319Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-extens-o-chrome-e-leitura-do-whatsapp/02-CONTEXT.md
+Last session: 2026-07-11T12:24:45.349Z
+Stopped at: Completed 01-08-PLAN.md — Fase 1 completa (8/8), checkpoint humano aprovado
+Resume file: None
