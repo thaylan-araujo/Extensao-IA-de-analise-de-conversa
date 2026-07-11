@@ -19,7 +19,7 @@ O advogado recebe orientação de IA que efetivamente aumenta a conversão de le
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Fundação multi-tenant no ar e validada pelo dono (Fase 1, 2026-07-11): organizações, papéis gestor/advogado/super-admin, convites com reativação, remoção com histórico preservado, reset de senha, isolamento cross-tenant provado por pgTAP em CI, dados criptografados em repouso em São Paulo (AUTH-03/04/05, LGPD-01) — painel em https://copiloto-juridico.vercel.app
 
 ### Active
 
@@ -90,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-08 after roadmap reordering (methodology/calibration moved to final phase)*
+*Last updated: 2026-07-11 after Phase 1 completion (multi-tenant foundation live and owner-verified)*
