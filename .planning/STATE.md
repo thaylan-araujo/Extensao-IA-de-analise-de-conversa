@@ -6,14 +6,14 @@ current_phase: 01
 current_phase_name: funda-o-backend-multi-tenant
 status: executing
 stopped_at: Phase 2 context gathered
-last_updated: "2026-07-10T23:43:56.253Z"
+last_updated: "2026-07-11T00:07:16.936Z"
 last_activity: 2026-07-10
-last_activity_desc: "Plan 01-06 complete: password recovery request, confirm handler, and new password flow green locally"
+last_activity_desc: Phase 01 execution resumed (wave continue)
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
   percent: 0
 ---
 
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-04)
 ## Current Position
 
 Phase: 01 (funda-o-backend-multi-tenant) — EXECUTING
-Plan: 6 of 8 complete
-Status: Executing Phase 01
-Last activity: 2026-07-10 — Plan 01-06 complete: password recovery request, confirm handler, and new password flow green locally
+Plan: 7 of 8 complete
+Status: Ready to execute
+Last activity: 2026-07-10 — Phase 01 execution resumed (wave continue)
 
 Progress: [████████░░] 75%
 
@@ -55,6 +55,7 @@ Progress: [████████░░] 75%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01 P07 | 15m | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,7 @@ Recent decisions affecting current work:
 - [Roadmap]: Diagnóstico por inatividade roda server-side (cron), nunca no service worker MV3
 - [Roadmap]: Painel do gestor (Phase 5) gated por testes cross-tenant em CI (Phase 1); as notas exibidas vêm do cérebro provisório até a calibração da Phase 7
 - [Roadmap]: Cobrança e LGPD operacional (Phase 6) deixam a operação pronta, mas o beta só abre com a calibração aceita na Phase 7
+- [Phase 01]: 01-07: Revogação de sessão na remoção = ban via updateUserById (A5) — admin.signOut exige o JWT do alvo, indisponível server-side; ban bloqueia refresh e RLS por lookup nega leituras imediatamente — provado sem refresh no teste 2
 
 ### Pending Todos
 
@@ -91,6 +93,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-10T23:43:56.240Z
+Last session: 2026-07-11T00:06:25.319Z
 Stopped at: Phase 2 context gathered
 Resume file: .planning/phases/02-extens-o-chrome-e-leitura-do-whatsapp/02-CONTEXT.md

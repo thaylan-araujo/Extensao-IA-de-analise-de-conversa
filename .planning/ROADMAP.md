@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Testes cross-tenant automatizados (duas organizações) passam em CI, provando que nenhuma consulta vaza dados entre organizações
   5. Transcrições e análises são gravadas criptografadas em repouso, em região brasileira (São Paulo)
 
-**Plans:** 8 plans
+**Plans:** 7/8 plans executed
 
 Plans:
 **Wave 1**
@@ -60,7 +60,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 01-07-PLAN.md — Remoção com revogação imediata + interface admin do super-admin
+- [x] 01-07-PLAN.md — Remoção com revogação imediata + interface admin do super-admin
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fundação Backend Multi-Tenant | 6/8 | In progress | - |
+| 1. Fundação Backend Multi-Tenant | 7/8 | In Progress|  |
 | 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |

@@ -12,8 +12,8 @@ Requisitos da versão inicial (beta fechado com clientes da agência). Cada um m
 - [ ] **AUTH-01**: Advogado pode fazer login na extensão com e-mail/senha
 - [ ] **AUTH-02**: Sessão do advogado persiste entre reinícios do navegador, com logout disponível
 - [ ] **AUTH-03**: Usuário pode redefinir a senha via link por e-mail
-- [ ] **AUTH-04**: Gestor pode fazer login no painel web; papéis separados (gestor vê tudo, advogado não vê dados dos colegas)
-- [ ] **AUTH-05**: Gestor pode convidar e remover advogados da sua organização por e-mail
+- [x] **AUTH-04**: Gestor pode fazer login no painel web; papéis separados (gestor vê tudo, advogado não vê dados dos colegas)
+- [x] **AUTH-05**: Gestor pode convidar e remover advogados da sua organização por e-mail
 
 ### Extensão & Leitura do WhatsApp (EXT)
 
@@ -111,8 +111,8 @@ Mapeamento requisito → fase do roadmap. Atualizado na revisão do roadmap (202
 | AUTH-01 | Phase 2 | Pending |
 | AUTH-02 | Phase 2 | Pending |
 | AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| AUTH-05 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Complete |
+| AUTH-05 | Phase 1 | Complete |
 | EXT-01 | Phase 2 | Pending |
 | EXT-02 | Phase 2 | Pending |
 | EXT-03 | Phase 2 | Pending |
@@ -144,6 +144,7 @@ Mapeamento requisito → fase do roadmap. Atualizado na revisão do roadmap (202
 | LGPD-04 | Phase 6 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 34 total (contagem corrigida na criação do roadmap; nota anterior dizia 30)
 - Mapped to phases: 34
 - Unmapped: 0 ✓
