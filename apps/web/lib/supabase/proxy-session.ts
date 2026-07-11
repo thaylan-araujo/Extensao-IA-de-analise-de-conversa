@@ -69,10 +69,14 @@ export async function updateSession(request: NextRequest) {
     }
   });
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  const role = user?.app_metadata?.user_role as UserRole | undefined;
+  // O papel vem das claims do JWT (injetadas pelo custom_access_token_hook).
+  // getUser() retorna o registro do usuário SEM as claims do hook — usar
+  // getClaims(), que valida o token e expõe app_metadata.user_role (D-07).
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const appMetadata = claimsData?.claims?.app_metadata as
+    | { user_role?: UserRole }
+    | undefined;
+  const role = appMetadata?.user_role;
   const redirectTo = decideRedirect(role, request.nextUrl.pathname);
 
   if (!redirectTo) {
