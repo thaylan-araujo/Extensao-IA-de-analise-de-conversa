@@ -33,8 +33,12 @@ describe("decideRedirect", () => {
     expect(decideRedirect("gestor", "/admin/usuarios")).toBe("/");
   });
 
-  it("allows super_admin users on dashboard and admin routes", () => {
-    expect(decideRedirect("super_admin", "/")).toBeNull();
+  it("sends super_admin from the root dashboard to the admin interface", () => {
+    expect(decideRedirect("super_admin", "/")).toBe("/admin");
+  });
+
+  it("allows super_admin users on admin and team routes", () => {
     expect(decideRedirect("super_admin", "/admin")).toBeNull();
+    expect(decideRedirect("super_admin", "/equipe")).toBeNull();
   });
 });

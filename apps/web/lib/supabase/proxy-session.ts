@@ -45,6 +45,12 @@ export function decideRedirect(
     return "/";
   }
 
+  // Super-admin entra direto na interface admin (D-02): o painel comum mostra
+  // a organização interna da Elite Juris, que não é o trabalho dele.
+  if (role === "super_admin" && pathname === "/") {
+    return "/admin";
+  }
+
   return null;
 }
 

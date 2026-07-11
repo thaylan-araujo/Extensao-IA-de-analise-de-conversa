@@ -53,6 +53,11 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             <Link className="text-zinc-700 hover:text-emerald-700" href="/equipe">
               Equipe
             </Link>
+            {profile.role === "super_admin" ? (
+              <Link className="text-zinc-700 hover:text-emerald-700" href="/admin">
+                Admin
+              </Link>
+            ) : null}
             <form action="/auth/signout" method="post">
               <button
                 className="rounded border border-zinc-300 px-3 py-2 text-sm font-semibold text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-100"
