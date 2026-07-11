@@ -95,6 +95,18 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     // por organização e execuções repetidas estouravam o limite (429).
     // Escopado à org do gestor seed para não interferir em suítes paralelas.
     const admin = createAdminClient();
+
+    // Usuários @example.test criados pelos fluxos de aceite/reativação também
+    // não podem acumular: sem Docker os testes rodam contra o banco hospedado,
+    // e o resíduo poluía a tela de equipe do Escritorio Demo em produção.
+    const { data: allUsers } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    for (const user of allUsers?.users ?? []) {
+      if (/@example\.test$/i.test(user.email ?? "")) {
+        await admin.from("profiles").delete().eq("user_id", user.id);
+        await admin.auth.admin.deleteUser(user.id).catch(() => null);
+      }
+    }
+
     const seedGestor = await admin.auth.admin
       .listUsers({ page: 1, perPage: 1000 })
       .then(({ data }) =>
