@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { generateInviteToken, hashToken } from "../lib/invitations/token";
 import { createAdminClient } from "../lib/supabase/admin";
@@ -88,6 +88,42 @@ describe.skipIf(!hasHostedSupabaseSecrets)("invitation lifecycle against hosted 
     }
 
     advogadoAccessToken = advogadoData.session.access_token;
+  });
+
+  afterAll(async () => {
+    // Convites de teste não podem acumular: o endpoint limita 20 pendentes
+    // por organização e execuções repetidas estouravam o limite (429).
+    // Escopado à org do gestor seed para não interferir em suítes paralelas.
+    const admin = createAdminClient();
+    const seedGestor = await admin.auth.admin
+      .listUsers({ page: 1, perPage: 1000 })
+      .then(({ data }) =>
+        data.users.find(
+          (candidate) =>
+            candidate.email?.toLowerCase() ===
+            process.env.SEED_GESTOR_EMAIL?.toLowerCase()
+        )
+      );
+
+    if (!seedGestor) {
+      return;
+    }
+
+    const { data: seedProfile } = await admin
+      .from("profiles")
+      .select("organization_id")
+      .eq("user_id", seedGestor.id)
+      .maybeSingle();
+
+    if (!seedProfile) {
+      return;
+    }
+
+    await admin
+      .from("invitations")
+      .delete()
+      .eq("organization_id", seedProfile.organization_id)
+      .like("email", "%@example.test");
   });
 
   it("returns 403 when an advogado tries to create an invitation", async () => {

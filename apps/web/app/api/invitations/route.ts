@@ -1,9 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
-import { renderInviteEmail } from "../../../lib/email/templates/invite";
-import { sendEmail } from "../../../lib/email";
-import { generateInviteToken } from "../../../lib/invitations/token";
+import { createInvitationAndSendEmail } from "../../../lib/invitations/create";
 import {
   findAuthUserByEmail,
   getActorContext,
@@ -15,8 +13,6 @@ const createInvitationSchema = z.object({
   email: z.string().email(),
   role: invitationRoleSchema
 });
-
-const INVITE_EXPIRES_IN_DAYS = 7;
 
 export async function POST(request: NextRequest | Request) {
   const parsed = createInvitationSchema.safeParse(await request.json().catch(() => null));
@@ -62,49 +58,28 @@ export async function POST(request: NextRequest | Request) {
     .select("name")
     .eq("id", actor.organizationId)
     .single();
-  const { token, tokenHash } = generateInviteToken();
-  const expiresAt = new Date(
-    Date.now() + INVITE_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000
-  ).toISOString();
 
-  const { data: invitation, error } = await actor.admin
-    .from("invitations")
-    .insert({
-      email,
-      expires_at: expiresAt,
-      invited_by: actor.user.id,
-      organization_id: actor.organizationId,
-      role,
-      token_hash: tokenHash
-    })
-    .select("*")
-    .single();
+  const result = await createInvitationAndSendEmail({
+    admin: actor.admin,
+    email,
+    invitedBy: actor.user.id,
+    organizationId: actor.organizationId,
+    organizationName: organization?.name ?? "sua organização",
+    role
+  });
 
-  if (error?.code === "23505") {
-    return jsonError("Convite pendente já existe. Reenvie o convite.", 409);
-  }
+  if ("errorCode" in result) {
+    if (result.errorCode === "duplicate") {
+      return jsonError("Convite pendente já existe. Reenvie o convite.", 409);
+    }
 
-  if (error) {
     return jsonError("Não foi possível criar o convite.", 500);
   }
 
-  const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/convite/${token}`;
-  const emailContent = renderInviteEmail({
-    expiresInDays: INVITE_EXPIRES_IN_DAYS,
-    inviteUrl,
-    organizationName: organization?.name ?? "sua organização"
-  });
-
-  await sendEmail({
-    to: email,
-    subject: emailContent.subject,
-    html: emailContent.html
-  });
-
   return NextResponse.json(
     {
-      invitation,
-      token: process.env.EMAIL_DRIVER === "resend" ? undefined : token
+      invitation: result.invitation,
+      token: result.token
     },
     { status: 201 }
   );
