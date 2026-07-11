@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const verifyOtp = vi.hoisted(() => vi.fn());
+const exchangeCodeForSession = vi.hoisted(() => vi.fn());
 
 vi.mock("../lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: {
-      verifyOtp
+      verifyOtp,
+      exchangeCodeForSession
     }
   }))
 }));
@@ -13,6 +15,7 @@ vi.mock("../lib/supabase/server", () => ({
 describe("GET /auth/confirm", () => {
   beforeEach(() => {
     verifyOtp.mockReset();
+    exchangeCodeForSession.mockReset();
   });
 
   it("verifies a recovery token and redirects to the internal next path", async () => {
@@ -64,6 +67,31 @@ describe("GET /auth/confirm", () => {
     const response = await GET(new Request("http://localhost:3000/auth/confirm"));
 
     expect(verifyOtp).not.toHaveBeenCalled();
+    expect(exchangeCodeForSession).not.toHaveBeenCalled();
+    expect(response.headers.get("location")).toBe(
+      "http://localhost:3000/recuperar-senha?erro=link-invalido"
+    );
+  });
+
+  it("exchanges a PKCE code (default Supabase template) and redirects to next", async () => {
+    exchangeCodeForSession.mockResolvedValue({ error: null });
+    const { GET } = await import("../app/auth/confirm/route");
+    const response = await GET(
+      new Request("http://localhost:3000/auth/confirm?next=/nova-senha&code=pkce-code-123")
+    );
+
+    expect(exchangeCodeForSession).toHaveBeenCalledWith("pkce-code-123");
+    expect(verifyOtp).not.toHaveBeenCalled();
+    expect(response.headers.get("location")).toBe("http://localhost:3000/nova-senha");
+  });
+
+  it("redirects to recuperar-senha with an error when the code exchange fails", async () => {
+    exchangeCodeForSession.mockResolvedValue({ error: new Error("invalid code") });
+    const { GET } = await import("../app/auth/confirm/route");
+    const response = await GET(
+      new Request("http://localhost:3000/auth/confirm?next=/nova-senha&code=expired-code")
+    );
+
     expect(response.headers.get("location")).toBe(
       "http://localhost:3000/recuperar-senha?erro=link-invalido"
     );

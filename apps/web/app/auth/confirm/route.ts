@@ -20,20 +20,37 @@ export async function GET(request: NextRequest | Request) {
   const url = new URL(request.url);
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type");
+  const code = url.searchParams.get("code");
+  const nextPath = safeNextPath(url.searchParams.get("next"));
 
-  if (!tokenHash || type !== "recovery") {
-    return errorRedirect(url.origin);
+  // Fluxo do template personalizado: link carrega token_hash + type=recovery.
+  if (tokenHash && type === "recovery") {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: "recovery"
+    });
+
+    if (error) {
+      return errorRedirect(url.origin);
+    }
+
+    return NextResponse.redirect(new URL(nextPath, url.origin));
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.verifyOtp({
-    token_hash: tokenHash,
-    type: "recovery"
-  });
+  // Fluxo do template PADRÃO do Supabase (plano Free sem SMTP próprio não aceita
+  // template custom): o /auth/v1/verify da Supabase redireciona para cá com ?code=.
+  // Trocamos o code por sessão (PKCE) — mesmo resultado do verifyOtp acima.
+  if (code) {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (error) {
-    return errorRedirect(url.origin);
+    if (error) {
+      return errorRedirect(url.origin);
+    }
+
+    return NextResponse.redirect(new URL(nextPath, url.origin));
   }
 
-  return NextResponse.redirect(new URL(safeNextPath(url.searchParams.get("next")), url.origin));
+  return errorRedirect(url.origin);
 }
