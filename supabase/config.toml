@@ -220,8 +220,11 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-# false: invite-only (CR-02) — ver [auth].enable_signup acima.
-enable_signup = false
+# ATENÇÃO: no projeto hospedado este flag desliga o PROVEDOR de e-mail inteiro
+# (login incluído — "email_provider_disabled" derrubou o login em produção em
+# 2026-07-11). O bloqueio de cadastro público (CR-02) é feito EXCLUSIVAMENTE
+# pelo [auth].enable_signup = false acima. NÃO mudar este para false.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
