@@ -80,7 +80,27 @@ Plans:
   4. Se a leitura do DOM quebrar, o advogado vê um aviso amigável em pt-BR (não falha silenciosa), as funções de IA são bloqueadas e um kill-switch remoto pode desativar a leitura
   5. O WhatsApp Web continua fluido com a extensão ativa, e a extensão nunca escreve no DOM nem envia mensagens (garantia arquitetural verificada)
 
-**Plans**: TBD
+**Plans:** 7 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Scaffold WXT + gate de pacotes + spike hands-on de seletores no WhatsApp real
+- [ ] 02-02-PLAN.md — Migration de sync (dedup, kill-switch, saúde) + db push + tipos + pgTAP
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-03-PLAN.md — Painel lateral completo com login e sessão persistente (UI-SPEC)
+- [ ] 02-04-PLAN.md — Parser + canário contra fixtures reais + gate somente-leitura EXT-08 no CI
+- [ ] 02-05-PLAN.md — Admin: toggle do kill-switch (D-15) + indicador de saúde da leitura (D-14)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 02-06-PLAN.md — Observers + sincronização idempotente + kill-switch/heartbeat — fatia vertical completa
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 02-07-PLAN.md — Build de produção + verificação humana ponta a ponta + submissão CWS unlisted (D-12)
 **UI hint**: yes
 
 ### Phase 3: Sugerir Resposta
