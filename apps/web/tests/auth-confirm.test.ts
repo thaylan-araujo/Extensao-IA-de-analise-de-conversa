@@ -62,6 +62,19 @@ describe("GET /auth/confirm", () => {
     expect(response.headers.get("location")).toBe("http://localhost:3000/nova-senha");
   });
 
+  it("blocks backslash-based open redirect in next (CR-01)", async () => {
+    verifyOtp.mockResolvedValue({ error: null });
+    const { GET } = await import("../app/auth/confirm/route");
+    const response = await GET(
+      new Request(
+        "http://localhost:3000/auth/confirm?token_hash=valid-hash&type=recovery&next=" +
+          encodeURIComponent("/\\evil.example")
+      )
+    );
+
+    expect(response.headers.get("location")).toBe("http://localhost:3000/nova-senha");
+  });
+
   it("redirects with an error without calling verifyOtp when params are missing", async () => {
     const { GET } = await import("../app/auth/confirm/route");
     const response = await GET(new Request("http://localhost:3000/auth/confirm"));

@@ -9,7 +9,14 @@ function errorRedirect(origin: string) {
 }
 
 function safeNextPath(next: string | null) {
-  if (!next || !next.startsWith("/") || next.startsWith("//")) {
+  // Barra invertida é normalizada para "/" pelo parser de URL do navegador
+  // (WHATWG): "/\evil.example" vira "//evil.example" — open redirect (CR-01).
+  if (
+    !next ||
+    !next.startsWith("/") ||
+    next.startsWith("//") ||
+    next.includes("\\")
+  ) {
     return "/nova-senha";
   }
 
