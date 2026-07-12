@@ -3,6 +3,14 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "../../lib/supabase/server";
 import { CreateOrgForm } from "./create-org-form";
+import { KillSwitchToggle } from "./kill-switch-toggle";
+
+// D-14: rótulos de saúde da leitura por advogado (ok/drift/broken).
+const readerStatusLabels: Record<string, { className: string; label: string }> = {
+  broken: { className: "text-red-700", label: "Quebrada" },
+  drift: { className: "text-amber-600", label: "Drift de seletor" },
+  ok: { className: "text-emerald-700", label: "Leitura OK" }
+};
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -26,15 +34,29 @@ export default async function AdminPage() {
   }
 
   // Super-admin lê todas as organizações via RLS (private.is_super_admin()).
-  const [{ data: organizations }, { data: profiles }, { data: invitations }] =
-    await Promise.all([
-      supabase
-        .from("organizations")
-        .select("id, name, created_at")
-        .order("created_at", { ascending: false }),
-      supabase.from("profiles").select("organization_id, status"),
-      supabase.from("invitations").select("organization_id, status")
-    ]);
+  const [
+    { data: organizations },
+    { data: profiles },
+    { data: invitations },
+    { data: readerSetting },
+    { data: readerStatuses }
+  ] = await Promise.all([
+    supabase
+      .from("organizations")
+      .select("id, name, created_at")
+      .order("created_at", { ascending: false }),
+    supabase.from("profiles").select("user_id, full_name, organization_id, status"),
+    supabase.from("invitations").select("organization_id, status"),
+    supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "reader_enabled")
+      .maybeSingle(),
+    supabase
+      .from("reader_status")
+      .select("profile_id, organization_id, status, extension_version, last_seen_at")
+      .order("last_seen_at", { ascending: false })
+  ]);
 
   const rows = (organizations ?? []).map((organization) => ({
     ...organization,
@@ -48,6 +70,22 @@ export default async function AdminPage() {
         invitation.organization_id === organization.id &&
         invitation.status === "pending"
     ).length
+  }));
+
+  const readerEnabled = readerSetting?.value === true;
+
+  // Join em memória (mesmo padrão das contagens acima): reader_status →
+  // full_name do profile e nome da organização.
+  const fullNameByUserId = new Map(
+    (profiles ?? []).map((candidate) => [candidate.user_id, candidate.full_name])
+  );
+  const organizationNameById = new Map(
+    (organizations ?? []).map((organization) => [organization.id, organization.name])
+  );
+  const readerRows = (readerStatuses ?? []).map((status) => ({
+    ...status,
+    fullName: fullNameByUserId.get(status.profile_id) ?? "—",
+    organizationName: organizationNameById.get(status.organization_id) ?? "—"
   }));
 
   return (
@@ -128,6 +166,80 @@ export default async function AdminPage() {
             </tbody>
           </table>
         </div>
+
+        <section className="grid gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-zinc-950">
+              Leitura do WhatsApp
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600">
+              Kill-switch global: desligar pausa a leitura de todos os advogados
+              de todos os escritórios. Cada acionamento fica no log de auditoria.
+            </p>
+          </div>
+          <KillSwitchToggle readerEnabled={readerEnabled} />
+        </section>
+
+        <section className="grid gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-zinc-950">
+              Saúde da leitura
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-600">
+              Estado reportado pela extensão de cada advogado. É aqui que uma
+              quebra do WhatsApp Web aparece antes dos clientes reclamarem.
+            </p>
+          </div>
+          <div className="overflow-hidden rounded border border-zinc-200 bg-white">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-zinc-100 text-zinc-600">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Advogado</th>
+                  <th className="px-4 py-3 font-medium">Escritório</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Versão</th>
+                  <th className="px-4 py-3 font-medium">Último sinal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {readerRows.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-6 text-zinc-600" colSpan={5}>
+                      Nenhuma extensão reportou ainda.
+                    </td>
+                  </tr>
+                ) : (
+                  readerRows.map((row) => {
+                    const badge = readerStatusLabels[row.status] ?? {
+                      className: "text-zinc-700",
+                      label: row.status
+                    };
+
+                    return (
+                      <tr className="border-t border-zinc-200" key={row.profile_id}>
+                        <td className="px-4 py-3 font-medium text-zinc-950">
+                          {row.fullName}
+                        </td>
+                        <td className="px-4 py-3 text-zinc-700">
+                          {row.organizationName}
+                        </td>
+                        <td className={`px-4 py-3 font-medium ${badge.className}`}>
+                          {badge.label}
+                        </td>
+                        <td className="px-4 py-3 text-zinc-700">
+                          {row.extension_version ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 text-zinc-700">
+                          {new Date(row.last_seen_at).toLocaleString("pt-BR")}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </main>
     </div>
   );
