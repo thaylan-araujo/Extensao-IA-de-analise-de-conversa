@@ -6,14 +6,14 @@ current_phase: 02
 current_phase_name: Extensão Chrome e Leitura do WhatsApp
 status: executing
 stopped_at: Completed 02-01-PLAN.md (scaffold da extensão + spike de âncoras)
-last_updated: "2026-07-12T18:43:32.769Z"
+last_updated: "2026-07-12T20:38:39.707Z"
 last_activity: 2026-07-12
-last_activity_desc: Phase 02 execution started
+last_activity_desc: Completed 02-01 (scaffold da extensão + spike de âncoras)
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 15
-  completed_plans: 11
+  completed_plans: 12
   percent: 14
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-04)
 ## Current Position
 
 Phase: 02 (Extensão Chrome e Leitura do WhatsApp) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-07-12 — Completed 02-01 (scaffold da extensão + spike de âncoras)
 
@@ -59,6 +59,7 @@ Progress: [███████░░░] 73%
 | Phase 01 P08 | 11h30m | 2 tasks | 12 files |
 | Phase 02 P05 | 6min | 2 tasks | 4 files |
 | Phase 02 P01 | 35m | 3 tasks | 26 files |
+| Phase 02 P03 | 40min | 3 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - [Phase 02-05]: Flag reader_enabled interpretada estritamente como value === true — estado inesperado aparece como desativada (fail-closed na UI)
 - [Phase 02]: 02-01: data-id do WhatsApp sofreu drift (hash puro, sem chatId/@c.us) — from-me via tail-out/in com fallback por recibo em msg-meta; grupo via author/chat-subtitle; wa_chat_id sem fonte primária, questão aberta para o 02-04
 - [Phase 02]: 02-01: CORS confirmado do content script ao Supabase (HTTP 401 no REST) — cliente supabase-js vive no content script, sem fallback via background
+- [Phase 02]: 02-03: cliente supabase da extensão com storageKey próprio copiloto_auth e singleton lazy via Proxy — módulo importável sem env, testes injetam clients
+- [Phase 02]: 02-03: postgrest-js 2.110 tem retry+backoff nativo (1s/2s/4s) em erro de rede — preservado em produção; testes de falha de rede precisam de timeout maior
+- [Phase 02]: 02-03: view do painel derivada por resolveView pura; insumos do reader entram como default até 02-04/02-06 alimentarem via setReaderInputs
 
 ### Pending Todos
 
@@ -105,6 +109,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-12T18:35:59.687Z
+Last session: 2026-07-12T20:37:30.403Z
 Stopped at: Phase 2 UI-SPEC approved
 Resume file: .planning/phases/02-extens-o-chrome-e-leitura-do-whatsapp/02-UI-SPEC.md
