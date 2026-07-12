@@ -80,13 +80,13 @@ Plans:
   4. Se a leitura do DOM quebrar, o advogado vê um aviso amigável em pt-BR (não falha silenciosa), as funções de IA são bloqueadas e um kill-switch remoto pode desativar a leitura
   5. O WhatsApp Web continua fluido com a extensão ativa, e a extensão nunca escreve no DOM nem envia mensagens (garantia arquitetural verificada)
 
-**Plans:** 7 plans
+**Plans:** 1/7 plans executed
 
 Plans:
 **Wave 1**
 
 - [ ] 02-01-PLAN.md — Scaffold WXT + gate de pacotes + spike hands-on de seletores no WhatsApp real
-- [ ] 02-02-PLAN.md — Migration de sync (dedup, kill-switch, saúde) + db push + tipos + pgTAP
+- [x] 02-02-PLAN.md — Migration de sync (dedup, kill-switch, saúde) + db push + tipos + pgTAP
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -101,6 +101,7 @@ Plans:
 **Wave 4** *(blocked on Wave 3 completion)*
 
 - [ ] 02-07-PLAN.md — Build de produção + verificação humana ponta a ponta + submissão CWS unlisted (D-12)
+
 **UI hint**: yes
 
 ### Phase 3: Sugerir Resposta
@@ -192,7 +193,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Fundação Backend Multi-Tenant | 8/8 | Complete    | 2026-07-11 |
-| 2. Extensão Chrome e Leitura do WhatsApp | 0/? | Not started | - |
+| 2. Extensão Chrome e Leitura do WhatsApp | 1/7 | In Progress|  |
 | 3. Sugerir Resposta | 0/? | Not started | - |
 | 4. Diagnóstico Automático e Desfecho | 0/? | Not started | - |
 | 5. Painel do Gestor | 0/? | Not started | - |
