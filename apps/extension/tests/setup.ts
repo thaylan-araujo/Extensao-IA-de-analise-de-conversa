@@ -50,6 +50,23 @@ const localMock = {
   storage: { local: localMock },
 };
 
+// happy-dom 19 não fornece WebSocket e o construtor do supabase-js (realtime-js)
+// exige que exista um. Os testes nunca abrem canais realtime — stub inerte basta.
+if (typeof (globalThis as Record<string, unknown>).WebSocket === "undefined") {
+  class WebSocketStub {
+    static readonly CONNECTING = 0;
+    static readonly OPEN = 1;
+    static readonly CLOSING = 2;
+    static readonly CLOSED = 3;
+    readyState = WebSocketStub.CLOSED;
+    close(): void {}
+    send(): void {}
+    addEventListener(): void {}
+    removeEventListener(): void {}
+  }
+  (globalThis as Record<string, unknown>).WebSocket = WebSocketStub;
+}
+
 beforeEach(() => {
   memoryStore.clear();
 });

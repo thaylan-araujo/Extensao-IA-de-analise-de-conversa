@@ -233,7 +233,8 @@ describe("checkProfileStatus", () => {
     }
   });
 
-  it('retorna "error" em falha de rede — NUNCA engole o erro como removed (Pitfall 3)', async () => {
+  // Timeout maior: o postgrest-js 2.110 faz retry com backoff (1s/2s/4s) em erro de rede.
+  it('retorna "error" em falha de rede — NUNCA engole o erro como removed (Pitfall 3)', { timeout: 15000 }, async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => {
