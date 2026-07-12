@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/*
+ * Reset do host do Shadow DOM (contrato do 02-UI-SPEC.md + Pitfall 4 do 02-RESEARCH.md):
+ * - WXT aplica `all: initial` no host, mas NÃO reseta o font-size do <html> da página —
+ *   as unidades rem do Tailwind escalariam com o font-size do WhatsApp/usuário.
+ * - O painel NÃO herda fontes da página: font stack declarado explicitamente no :host.
+ */
+:host {
+  font-size: 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  color: #111827;
+}

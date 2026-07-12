@@ -1,0 +1,32 @@
+{
+  "name": "@copiloto/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "postinstall": "wxt prepare",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.110.2",
+    "lucide-react": "1.24.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.2",
+    "@types/chrome": "0.2.2",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@wxt-dev/module-react": "1.2.2",
+    "happy-dom": "20.10.6",
+    "tailwindcss": "4.3.2",
+    "typescript": "~5.9.3",
+    "vitest": "4.1.10",
+    "wxt": "0.20.27"
+  }
+}

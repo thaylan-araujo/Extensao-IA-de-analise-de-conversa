@@ -9,5 +9,8 @@ coverage
 !.env.example
 .vercel
 supabase/.temp
+# WXT (apps/extension): tipos gerados e builds
+.wxt
+.output
 *.tsbuildinfo
 .DS_Store
