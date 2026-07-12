@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 02
 current_phase_name: Extensão Chrome e Leitura do WhatsApp
 status: executing
-stopped_at: Phase 2 UI-SPEC approved
-last_updated: "2026-07-12T10:48:59.296Z"
+stopped_at: Completed 02-01-PLAN.md (scaffold da extensão + spike de âncoras)
+last_updated: "2026-07-12T18:43:32.769Z"
 last_activity: 2026-07-12
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 15
-  completed_plans: 10
+  completed_plans: 11
   percent: 14
 ---
 
@@ -29,11 +29,11 @@ See: .planning/PROJECT.md (updated 2026-07-04)
 ## Current Position
 
 Phase: 02 (Extensão Chrome e Leitura do WhatsApp) — EXECUTING
-Plan: 3 of 7
+Plan: 4 of 7
 Status: Ready to execute
-Last activity: 2026-07-12 — Phase 02 execution started
+Last activity: 2026-07-12 — Completed 02-01 (scaffold da extensão + spike de âncoras)
 
-Progress: [██████████] 100%
+Progress: [███████░░░] 73%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [██████████] 100%
 | Phase 01 P07 | 15m | 3 tasks | 13 files |
 | Phase 01 P08 | 11h30m | 2 tasks | 12 files |
 | Phase 02 P05 | 6min | 2 tasks | 4 files |
+| Phase 02 P01 | 35m | 3 tasks | 26 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-08: Rotas /api são públicas no proxy — cada Route Handler cuida da própria auth (evita redirect HTML em chamadas anônimas de API)
 - [Phase 02-05]: Join reader_status→profile/organização em memória no RSC (select de profiles estendido) em vez do embed por FK do PostgREST
 - [Phase 02-05]: Flag reader_enabled interpretada estritamente como value === true — estado inesperado aparece como desativada (fail-closed na UI)
+- [Phase 02]: 02-01: data-id do WhatsApp sofreu drift (hash puro, sem chatId/@c.us) — from-me via tail-out/in com fallback por recibo em msg-meta; grupo via author/chat-subtitle; wa_chat_id sem fonte primária, questão aberta para o 02-04
+- [Phase 02]: 02-01: CORS confirmado do content script ao Supabase (HTTP 401 no REST) — cliente supabase-js vive no content script, sem fallback via background
 
 ### Pending Todos
 
@@ -89,7 +92,7 @@ Recent decisions affecting current work:
 ### Blockers/Concerns
 
 - [Phase 7]: Depende de insumo do dono — documento de metodologia da agência, conversas reais exportadas (20-50) e disponibilidade para avaliar o conjunto dourado (disponíveis só no final do projeto, por decisão do dono)
-- [Phase 2]: DOM do WhatsApp Web é frágil e pouco documentado; spike hands-on necessário durante o planejamento
+- [Phase 2]: DOM do WhatsApp Web é frágil — spike 02-01 CONCLUÍDO (âncoras validadas em 02-SPIKE.md; drift do data-id confirmado e contornado). Risco residual: drift contínuo do DOM + fonte estável de wa_chat_id a resolver no 02-04
 - [Phase 6]: Verificar disponibilidade/termos de DPA e tier zero-data-retention da Anthropic para dados jurídicos sensíveis (LGPD Art. 33)
 
 ## Deferred Items
@@ -102,6 +105,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-12T10:48:21.631Z
+Last session: 2026-07-12T18:35:59.687Z
 Stopped at: Phase 2 UI-SPEC approved
 Resume file: .planning/phases/02-extens-o-chrome-e-leitura-do-whatsapp/02-UI-SPEC.md

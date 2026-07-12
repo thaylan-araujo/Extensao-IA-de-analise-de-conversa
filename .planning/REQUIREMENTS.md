@@ -17,9 +17,9 @@ Requisitos da versão inicial (beta fechado com clientes da agência). Cada um m
 
 ### Extensão & Leitura do WhatsApp (EXT)
 
-- [ ] **EXT-01**: Advogado vê um painel lateral recolhível injetado no WhatsApp Web, que não obstrui a área de chat
+- [x] **EXT-01**: Advogado vê um painel lateral recolhível injetado no WhatsApp Web, que não obstrui a área de chat
 - [ ] **EXT-02**: Painel reconhece qual conversa está aberta e reage à troca de conversa
-- [ ] **EXT-03**: Extensão lê a transcrição da conversa ativa (texto, remetente, horário); mídias aparecem como marcadores ([áudio], [imagem], [documento])
+- [x] **EXT-03**: Extensão lê a transcrição da conversa ativa (texto, remetente, horário); mídias aparecem como marcadores ([áudio], [imagem], [documento])
 - [x] **EXT-04**: Transcrição é sincronizada continuamente com o servidor (idempotente, sem duplicar mensagens)
 - [x] **EXT-05**: Se o WhatsApp Web mudar e a leitura quebrar, o advogado vê um aviso amigável em pt-BR (não falha silenciosa); kill-switch remoto disponível
 - [ ] **EXT-06**: Advogado vê um tour de onboarding (3-4 passos) no primeiro uso do painel
@@ -113,9 +113,9 @@ Mapeamento requisito → fase do roadmap. Atualizado na revisão do roadmap (202
 | AUTH-03 | Phase 1 | Complete |
 | AUTH-04 | Phase 1 | Complete |
 | AUTH-05 | Phase 1 | Complete |
-| EXT-01 | Phase 2 | Pending |
+| EXT-01 | Phase 2 | Complete |
 | EXT-02 | Phase 2 | Pending |
-| EXT-03 | Phase 2 | Pending |
+| EXT-03 | Phase 2 | Complete |
 | EXT-04 | Phase 2 | Complete |
 | EXT-05 | Phase 2 | Complete |
 | EXT-06 | Phase 6 | Pending |
