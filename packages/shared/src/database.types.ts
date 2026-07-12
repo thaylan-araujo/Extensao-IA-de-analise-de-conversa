@@ -39,6 +39,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           action: string
@@ -202,28 +220,37 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          from_me: boolean
           id: string
+          kind: string
           organization_id: string
           sender: string
           sent_at: string | null
+          wa_message_id: string | null
         }
         Insert: {
           content: string
           conversation_id: string
           created_at?: string
+          from_me?: boolean
           id?: string
+          kind?: string
           organization_id: string
           sender: string
           sent_at?: string | null
+          wa_message_id?: string | null
         }
         Update: {
           content?: string
           conversation_id?: string
           created_at?: string
+          from_me?: boolean
           id?: string
+          kind?: string
           organization_id?: string
           sender?: string
           sent_at?: string | null
+          wa_message_id?: string | null
         }
         Relationships: [
           {
@@ -295,6 +322,48 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      reader_status: {
+        Row: {
+          details: Json | null
+          extension_version: string | null
+          last_seen_at: string
+          organization_id: string
+          profile_id: string
+          status: string
+        }
+        Insert: {
+          details?: Json | null
+          extension_version?: string | null
+          last_seen_at?: string
+          organization_id: string
+          profile_id: string
+          status: string
+        }
+        Update: {
+          details?: Json | null
+          extension_version?: string | null
+          last_seen_at?: string
+          organization_id?: string
+          profile_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reader_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reader_status_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
