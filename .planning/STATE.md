@@ -6,14 +6,14 @@ current_phase: 02
 current_phase_name: Extensão Chrome e Leitura do WhatsApp
 status: executing
 stopped_at: Phase 2 UI-SPEC approved
-last_updated: "2026-07-12T10:24:39.443Z"
+last_updated: "2026-07-12T10:48:59.296Z"
 last_activity: 2026-07-12
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 15
-  completed_plans: 9
+  completed_plans: 10
   percent: 14
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-04)
 ## Current Position
 
 Phase: 02 (Extensão Chrome e Leitura do WhatsApp) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 Status: Ready to execute
 Last activity: 2026-07-12 — Phase 02 execution started
 
@@ -57,6 +57,7 @@ Progress: [██████████] 100%
 *Updated after each plan completion*
 | Phase 01 P07 | 15m | 3 tasks | 13 files |
 | Phase 01 P08 | 11h30m | 2 tasks | 12 files |
+| Phase 02 P05 | 6min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ Recent decisions affecting current work:
 - [Phase 01]: 01-08: Role gate do proxy usa getClaims() (claims do custom_access_token_hook não aparecem em getUser); RLS de profiles precisa de policy SELECT para supabase_auth_admin ou o hook falha silenciosamente
 - [Phase 01]: 01-08: /auth/confirm aceita fluxo ?code= do template padrão do Supabase (plano Free não permite template custom com SMTP default) além de token_hash
 - [Phase 01]: 01-08: Rotas /api são públicas no proxy — cada Route Handler cuida da própria auth (evita redirect HTML em chamadas anônimas de API)
+- [Phase 02-05]: Join reader_status→profile/organização em memória no RSC (select de profiles estendido) em vez do embed por FK do PostgREST
+- [Phase 02-05]: Flag reader_enabled interpretada estritamente como value === true — estado inesperado aparece como desativada (fail-closed na UI)
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-12T10:24:39.438Z
+Last session: 2026-07-12T10:48:21.631Z
 Stopped at: Phase 2 UI-SPEC approved
 Resume file: .planning/phases/02-extens-o-chrome-e-leitura-do-whatsapp/02-UI-SPEC.md
