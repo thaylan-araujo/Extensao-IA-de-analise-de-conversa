@@ -623,20 +623,25 @@ test('extrai texto, remetente e horário de mensagem recebida', () => {
 | A8 | Nome do contato no header do `#main` é extraível de forma razoavelmente estável | Pattern 4 | Baixo — painel mostra o lead sem nome bonito (fallback: número/id); não bloqueia sync. |
 | A9 | Uma unique constraint parcial (`where wa_message_id is not null`) convive com as linhas antigas de `messages` (não há nenhuma em produção ainda) | Pattern 5 | Baixo — banco está vazio de mensagens; migration segura. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Seletores reais do WhatsApp Web em produção (A1-A4, A8)**
+Todas as questões abertas foram absorvidas pelos planos da fase — nenhuma pendência de pesquisa bloqueia a execução.
+
+1. **Seletores reais do WhatsApp Web em produção (A1-A4, A8) — (RESOLVED)**
    - What we know: âncoras semânticas historicamente estáveis, documentadas por anos de projetos de automação.
    - What's unclear: estado exato em julho/2026 (classes ofuscadas mudam; atributos podem ter mudado).
    - Recommendation: **spike obrigatório como primeira task da fase** (checkpoint humano: dono/dev abre o WhatsApp Web com o skeleton carregado) — valida âncoras, captura fixtures, decide as heurísticas de mídia. O plano não deve detalhar seletores finais antes disso.
-2. **CSP/CORS do fetch no content script (A5)**
+   - **Resolução:** coberta pelo checkpoint humano bloqueante do plano **02-01 Task 3** (spike hands-on com `__copilotoSpike()`); o resultado vira **02-SPIKE.md**, fonte de verdade dos seletores consumida pelos planos **02-04** (parser/canário) e **02-06** (observers). Nenhum seletor de produção é escrito antes desse gate.
+2. **CSP/CORS do fetch no content script (A5) — (RESOLVED)**
    - What we know: Supabase responde `ACAO: *`; content scripts em isolated world fazem fetch sob as regras CORS da página.
    - What's unclear: se alguma política do WhatsApp interfere na prática.
    - Recommendation: testar no mesmo spike (um `select` autenticado de dentro do content script); fallback arquitetural (SW + alarms) já mapeado.
-3. **Conta de desenvolvedor Google (D-12)**
+   - **Resolução:** testada no mesmo spike via `__copilotoSpike.testSupabaseCors()` (**02-01 Task 3**, passo 6 do roteiro); o status HTTP é registrado em **02-SPIKE.md**. Se o fetch falhar, o fallback já mapeado (background SW + chrome.alarms) entra antes do plano 02-03 criar o cliente.
+3. **Conta de desenvolvedor Google (D-12) — (RESOLVED)**
    - What we know: taxa única US$5; verificação de identidade pode levar dias.
    - What's unclear: se a Elite Juris já tem conta.
    - Recommendation: task `user_setup` cedo na fase (criar conta + submeter build inicial unlisted), paralela ao desenvolvimento.
+   - **Resolução:** coberta pelo bloco `user_setup` (service chrome-web-store) + **Task 3 (checkpoint:human-action)** do plano **02-07** — criação de conta, ficha da loja e submissão unlisted, com pendência externa registrada em SUMMARY/STATE.md se a verificação de identidade demorar.
 
 ## Environment Availability
 
@@ -670,11 +675,11 @@ test('extrai texto, remetente e horário de mensagem recebida', () => {
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
 | EXT-03 | Parser extrai texto/remetente/horário/mídia das fixtures reais | unit | `vitest run tests/extract.test.ts` | ❌ Wave 0 (fixtures vêm do spike) |
-| EXT-04 | Reprocessar o mesmo lote 2x não duplica (`ON CONFLICT DO NOTHING`) | pgTAP + unit | `supabase test db` (04-sync-idempotency.test.sql) + teste da queue | ❌ Wave 0 |
+| EXT-04 | Reprocessar o mesmo lote 2x não duplica (`ON CONFLICT DO NOTHING`) | pgTAP + integração + unit | `supabase test db` (05-extension-sync.test.sql) + `vitest run tests/extension-schema.test.ts` (apps/web) + teste da queue | ❌ Wave 0 |
 | EXT-04 | RLS: advogado só insere mensagens em conversas próprias/da própria org | pgTAP | `supabase test db` (reusa suíte cross-tenant da Fase 1 + novas colunas) | ❌ Wave 0 |
 | EXT-05 | Canário: fixture sem `[data-id]` → estado `broken`; tela de QR → `wa_desconectado` (não quebra) | unit | `vitest run tests/canary.test.ts` | ❌ Wave 0 |
-| EXT-05 | Kill-switch: flag `false` → sync para; policies de `app_settings` (só super-admin escreve) | pgTAP + unit | `supabase test db` (05-app-settings.test.sql) | ❌ Wave 0 |
-| EXT-08 | Gate somente-leitura: nenhuma API de escrita/evento sintético em `reader/` | lint/CI (grep + ESLint) | `pnpm --filter extension lint` (regra custom) | ❌ Wave 0 |
+| EXT-05 | Kill-switch: flag `false` → sync para; policies de `app_settings` (só super-admin escreve) | pgTAP + unit | `supabase test db` (06-app-settings.test.sql) + `vitest run tests/flags.test.ts` | ❌ Wave 0 |
+| EXT-08 | Gate somente-leitura: nenhuma API de escrita/evento sintético em `reader/` | teste estático vitest + CI | `pnpm --filter extension exec vitest run tests/read-only-gate.test.ts` (gate como teste vitest — o repo não tem ESLint; mesma garantia, zero dependência nova) | ❌ Wave 0 |
 | EXT-01/02 | Painel monta no WhatsApp real, reage à troca de conversa, comprime sem sobrepor | manual-only — justificativa: exige WhatsApp logado por QR (impossível em CI); coberto no spike + UAT | — |
 | EXT-07 | Sem long tasks >50ms da extensão durante digitação; observers estreitos | manual-only (Performance panel no spike/UAT) — justificativa: profiling real exige página viva | — |
 | AUTH-01/02 | Login no painel; sessão sobrevive a restart do Chrome; logout limpa | integration (adapter chrome.storage mockado) + manual (restart real no UAT) | `vitest run tests/auth-storage.test.ts` | ❌ Wave 0 |
@@ -687,9 +692,9 @@ test('extrai texto, remetente e horário de mensagem recebida', () => {
 ### Wave 0 Gaps
 - [ ] `apps/extension/vitest.config.ts` + `tests/` (happy-dom)
 - [ ] `tests/fixtures/*.html` — capturadas no spike (msg-in-text, msg-out-text, áudio, imagem, documento, grupo, header)
-- [ ] `supabase/tests/04-sync-idempotency.test.sql` — EXT-04
-- [ ] `supabase/tests/05-app-settings.test.sql` — kill-switch RLS
-- [ ] Regra de lint/grep do gate somente-leitura (EXT-08) no CI
+- [ ] `supabase/tests/05-extension-sync.test.sql` — EXT-04 (dedup + RLS do sync)
+- [ ] `supabase/tests/06-app-settings.test.sql` — kill-switch + reader_status RLS
+- [ ] `apps/extension/tests/read-only-gate.test.ts` — gate somente-leitura (EXT-08), rodando no CI via extension-ci.yml
 - [ ] Framework install: `pnpm --filter extension add -D vitest happy-dom`
 
 ## Security Domain
