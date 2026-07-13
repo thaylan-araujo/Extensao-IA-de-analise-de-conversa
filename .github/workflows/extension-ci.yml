@@ -1,0 +1,33 @@
+# CI da extensão (plano 02-04): vitest (inclui o gate somente-leitura EXT-08)
+# + build a cada push/PR que toque a extensão ou o contrato compartilhado.
+# O gate rodando aqui transforma EXT-08 em garantia arquitetural verificável:
+# o build quebra se alguém introduzir escrita no DOM em reader/ ou sync/.
+name: extension-ci
+
+on:
+  push:
+    paths:
+      - "apps/extension/**"
+      - "packages/shared/**"
+      - ".github/workflows/extension-ci.yml"
+  pull_request:
+    paths:
+      - "apps/extension/**"
+      - "packages/shared/**"
+      - ".github/workflows/extension-ci.yml"
+
+jobs:
+  extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable pnpm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install
+      # Suíte completa da extensão — inclui tests/read-only-gate.test.ts (EXT-08)
+      - run: pnpm --filter extension exec vitest run
+      # O build valida manifest MV3 + bundling (WXT)
+      - run: pnpm --filter extension build
