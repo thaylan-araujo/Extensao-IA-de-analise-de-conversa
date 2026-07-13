@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "wxt",
-    "build": "wxt build",
+    "build": "NODE_OPTIONS=--max-old-space-size=512 wxt build",
     "zip": "wxt zip",
     "postinstall": "wxt prepare",
     "test": "vitest run"
