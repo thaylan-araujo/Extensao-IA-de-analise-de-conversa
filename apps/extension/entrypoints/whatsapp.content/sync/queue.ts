@@ -178,10 +178,14 @@ export function createSyncQueue({
         throw new Error(msgError.message);
       }
 
-      // ── Sucesso: marcar como enviados ─────────────────────────────────────
+      // ── Sucesso: marcar como enviados e limpar todos os pendentes ────────
+      // Limpar todos os DTOs do lote (válidos foram enviados; inválidos foram
+      // descartados pelo schema — não tentar re-enviar infinitamente).
+      for (const dto of dtos) {
+        pending.delete(dto.waMessageId);
+      }
       for (const dto of valid) {
         sentIds.add(dto.waMessageId);
-        pending.delete(dto.waMessageId);
       }
       flushAttempt = 0; // reset do backoff
     } catch (err) {
