@@ -9,6 +9,7 @@
 // - áudio NÃO tem data-pre-plain-text (hora via msg-meta)
 // - grupo: span[data-testid="author"] (row) / chat-subtitle (header) — substitui @g.us
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { MessageDTO } from "@copiloto/shared";
 import {
@@ -28,7 +29,9 @@ import {
 const REF_DATE = new Date(2026, 6, 11, 23, 0, 0);
 
 function loadHtml(name: string): string {
-  return readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8");
+  // cwd do vitest é apps/extension (onde vive o vitest.config.ts) — o
+  // import.meta.url reescrito pelo module runner do vite não resolve no disco.
+  return readFileSync(join(process.cwd(), "tests", "fixtures", name), "utf8");
 }
 
 /** Carrega uma fixture e devolve o elemento raiz (linha de mensagem ou header). */
