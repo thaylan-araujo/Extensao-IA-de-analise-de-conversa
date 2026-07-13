@@ -1,3 +1,4 @@
+// @vitest-environment node
 /**
  * Testes do adapter reader/state.ts (plano 02-06, Task 1).
  *

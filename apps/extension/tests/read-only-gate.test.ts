@@ -73,9 +73,9 @@ function isSourceFile(name: string): boolean {
 
 /** Lista recursivamente os fontes de um diretório (ignora se não existir ainda). */
 function listSources(dir: string): string[] {
-  let entries: ReturnType<typeof readdirSync>;
+  let entries: { name: string; isDirectory(): boolean; isFile(): boolean }[];
   try {
-    entries = readdirSync(dir, { withFileTypes: true });
+    entries = readdirSync(dir, { withFileTypes: true }) as unknown as typeof entries;
   } catch {
     return []; // diretório ainda não criado (ex.: sync/ antes do 02-06) — nada a varrer
   }

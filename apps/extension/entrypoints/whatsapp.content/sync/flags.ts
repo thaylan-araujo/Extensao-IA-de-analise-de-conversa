@@ -17,6 +17,7 @@
  */
 import type { ExtensionSupabaseClient } from "./supabase";
 import type { CanaryVerdict } from "../reader/canary";
+import type { Json } from "@copiloto/shared";
 
 /** Intervalo padrão do ciclo de saúde: 5 minutos. */
 export const HEALTH_INTERVAL_MS = 5 * 60 * 1000;
@@ -88,7 +89,8 @@ async function runCycle(options: HealthCycleOptions): Promise<void> {
     const version = getExtensionVersion();
 
     // details: SOMENTE metadados — NUNCA conteúdo de mensagem (LGPD T-02-21)
-    const details: Record<string, unknown> = {
+    // Typed as Json to match reader_status.details column type (Supabase generated types).
+    const details: Json = {
       verdict: canary,
       extension_version: version,
       kill_switch: killSwitch,

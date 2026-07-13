@@ -1,3 +1,4 @@
+// @vitest-environment node
 /**
  * Testes da fila de sincronização (sync/queue.ts — plano 02-06, Task 2).
  *
@@ -482,7 +483,12 @@ describe("createSyncQueue — fila de sincronização idempotente", () => {
     };
 
     queue.enqueue([dtoWithSensitiveContent]);
-    await vi.runAllTimersAsync();
+    // Advance only by autoFlushMs (100ms) to trigger the initial flush and let
+    // onError fire. Do NOT use vi.runAllTimersAsync() — the network-error path
+    // schedules a backoff setTimeout, which would create an infinite retry loop
+    // that hits vitest's 10000-timer guard.
+    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(0); // flush the doFlush() promise chain
 
     if (onError.mock.calls.length > 0) {
       const errorPayload = JSON.stringify(onError.mock.calls[0][0]);

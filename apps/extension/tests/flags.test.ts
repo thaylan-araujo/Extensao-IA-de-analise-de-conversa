@@ -1,3 +1,4 @@
+// @vitest-environment node
 /**
  * Testes do ciclo de saúde (sync/flags.ts — plano 02-06, Task 3).
  *
@@ -123,7 +124,7 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
     });
 
     // Ciclo inicial imediato
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(onSignals).toHaveBeenCalledWith(
       expect.objectContaining({ killSwitch: true }),
@@ -140,7 +141,7 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
       onSignals,
     });
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(onSignals).toHaveBeenCalledWith(
       expect.objectContaining({ killSwitch: false }),
@@ -162,7 +163,7 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
       onSignals,
     });
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(statusUpsert).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -186,7 +187,7 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
       getCanaryStatus: () => "drift",
     });
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     if (statusUpsert.mock.calls.length > 0) {
       const upsertPayload = statusUpsert.mock.calls[0][0];
@@ -214,7 +215,7 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
       onSignals,
     });
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(onSignals).toHaveBeenCalledWith(
       expect.objectContaining({ canary: "broken" }),
@@ -265,13 +266,13 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
     });
 
     // Primeiro ciclo: killSwitch true
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
     const firstCall = onSignals.mock.calls[0][0];
     expect(firstCall.killSwitch).toBe(true);
 
     // Avançar para o próximo ciclo (após HEALTH_INTERVAL_MS)
     await vi.advanceTimersByTimeAsync(HEALTH_INTERVAL_MS);
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     // Segundo ciclo: killSwitch false (flag voltou)
     const calls = onSignals.mock.calls;
@@ -295,7 +296,7 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
       onError,
     });
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     // O ciclo deve reportar erro de auth (não engolir — Pitfall 3)
     if (onError.mock.calls.length > 0) {
@@ -319,17 +320,17 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
     });
 
     // Ciclo inicial imediato (sem avançar tempo)
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
     expect(onSignals).toHaveBeenCalledTimes(1);
 
     // Avançar para o próximo ciclo
     await vi.advanceTimersByTimeAsync(HEALTH_INTERVAL_MS);
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
     expect(onSignals).toHaveBeenCalledTimes(2);
 
     // E mais um ciclo
     await vi.advanceTimersByTimeAsync(HEALTH_INTERVAL_MS);
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
     expect(onSignals).toHaveBeenCalledTimes(3);
   });
 
@@ -346,13 +347,13 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
       onSignals,
     });
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
     const countAfterStart = onSignals.mock.calls.length;
 
     stopHealthCycle();
 
     await vi.advanceTimersByTimeAsync(HEALTH_INTERVAL_MS * 3);
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(0);
 
     // Não deve ter novos ciclos após stop
     expect(onSignals).toHaveBeenCalledTimes(countAfterStart);
