@@ -108,9 +108,13 @@ export default defineContentScript({
     // Select vazio ou status removed → view "removido"; erro de rede NÃO
     // desloga nem marca removido (o heartbeat do 02-06 re-verifica).
     let profileRemoved = false;
+    let organizationId = "";
     if (session) {
       const profile = await checkProfileStatus(session.user.id);
       profileRemoved = profile.kind === "removed";
+      if (profile.kind === "active") {
+        organizationId = profile.profile.organizationId;
+      }
     }
 
     // D-06: aberto no primeiro uso; depois lembra a última escolha.
@@ -149,9 +153,7 @@ export default defineContentScript({
           client,
           getContext: () => ({
             userId: session.user.id,
-            organizationId:
-              (session.user.user_metadata as { organization_id?: string })
-                ?.organization_id ?? "",
+            organizationId,
             waChatId: currentWaChatId,
             contactName: currentContactName,
           }),
@@ -226,9 +228,7 @@ export default defineContentScript({
       startHealthCycle({
         client,
         profileId: session.user.id,
-        organizationId:
-          (session.user.user_metadata as { organization_id?: string })
-            ?.organization_id ?? "",
+        organizationId,
         getCanaryStatus: () => currentCanary,
         getExtensionVersion: () => {
           try {
