@@ -2,6 +2,64 @@
 
 Copiloto de IA para orientar atendimentos juridicos no WhatsApp e medir a conversao dos advogados em contratos fechados.
 
+## Extensão Chrome (apps/extension)
+
+O painel lateral injeta-se diretamente no WhatsApp Web e lê a conversa ativa sem jamais escrever no DOM.
+
+### Pré-requisitos
+
+Copie o arquivo de variáveis de ambiente da extensão:
+
+```bash
+cp .env.example .env
+# Preencha VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY com os valores do projeto Supabase
+```
+
+### Desenvolvimento (com HMR)
+
+```bash
+pnpm --filter extension dev
+```
+
+Abre o Chrome com a extensão já carregada via WXT. Acesse `web.whatsapp.com` — o painel lateral aparece automaticamente. Edições em `apps/extension/entrypoints/` recarregam o content script em tempo real.
+
+### Build de produção
+
+```bash
+pnpm --filter extension build
+# Saída: apps/extension/.output/chrome-mv3/
+```
+
+Em máquinas com memória limitada (<2 GB RAM livre), o `package.json` já inclui `NODE_OPTIONS=--max-old-space-size=512` no script de build para evitar OOM do esbuild.
+
+### Gerar zip para a Chrome Web Store
+
+```bash
+pnpm --filter extension zip
+# Saída: apps/extension/.output/*.zip
+```
+
+### Carregar sem compactação (desenvolvimento/QA)
+
+1. Abra `chrome://extensions`
+2. Ative o **Modo do desenvolvedor** (canto superior direito)
+3. Clique em **Carregar sem compactação**
+4. Selecione `apps/extension/.output/chrome-mv3/`
+
+### Testes
+
+```bash
+pnpm --filter extension test
+```
+
+### Distribuição (beta)
+
+O modelo de distribuição do beta é via **link não listado da Chrome Web Store** (sem aparecer nos resultados de busca). O link é distribuído pela Elite Juris diretamente aos escritórios parceiros. O Chrome aplica atualizações automáticas — canal de hotfix crítico para reagir a mudanças do WhatsApp sem que os usuários precisem reinstalar.
+
+O zip de submissão é gerado por `pnpm --filter extension zip`.
+
+---
+
 ## Desenvolvimento local
 
 ```bash
