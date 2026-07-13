@@ -7,9 +7,15 @@ import {
   PANEL_WIDTH_COLLAPSED,
   PANEL_WIDTH_EXPANDED,
 } from "./panel/PanelShell";
-import { PanelProvider } from "./panel/store";
+import { PanelProvider, type ReaderInputs } from "./panel/store";
 import { getExtensionEnv } from "./sync/env";
 import { checkProfileStatus, restoreSession } from "./sync/session";
+import { createExtensionClient } from "./sync/supabase";
+import { startHealthCycle, stopHealthCycle } from "./sync/flags";
+import { createSyncQueue } from "./sync/queue";
+import { startConversationObserver, stopAllObservers } from "./reader/observers";
+import { signalsToReaderInputs, type ReaderSignals } from "./reader/state";
+import type { CanaryVerdict } from "./reader/canary";
 
 /** Chave da persistência do estado aberto/recolhido do painel (D-06). */
 const PANEL_OPEN_KEY = "copiloto_panel_open";
@@ -118,7 +124,159 @@ export default defineContentScript({
       collapsed = next;
       persistPanelOpen(!next);
       applyWidthReservation(waRoot, next);
+      // D-04: recolher o painel NÃO toca no reader — nenhuma chamada aqui para
+      // stopAllObservers ou stopHealthCycle.
     };
+
+    // ── Referência ao setReaderInputs do PanelProvider ────────────────────
+    // Callback registrado na montagem do PanelProvider via ref; os observers e
+    // o healthCycle chamam este callback para alimentar o resolveView.
+    let setReaderInputsCb: ((partial: Partial<ReaderInputs>) => void) | null = null;
+    let markRemovedCb: (() => void) | null = null;
+
+    // Estado do canário compartilhado entre observers e healthCycle
+    let currentCanary: CanaryVerdict = "disconnected";
+
+    // ── Cliente Supabase (injetado para facilitar testes se necessário) ───
+    const client = createExtensionClient();
+
+    // ── Fila de sincronização ─────────────────────────────────────────────
+    let currentWaChatId = "";
+    let currentContactName: string | null = null;
+
+    const queue = session
+      ? createSyncQueue({
+          client,
+          getContext: () => ({
+            userId: session.user.id,
+            organizationId:
+              (session.user.user_metadata as { organization_id?: string })
+                ?.organization_id ?? "",
+            waChatId: currentWaChatId,
+            contactName: currentContactName,
+          }),
+          onError: (err) => {
+            // Pitfall 3: nunca engolir erros
+            console.error("[copiloto/queue] Erro de sync:", err.kind);
+            if (err.kind === "auth") {
+              // Sessão expirada — o healthCycle vai detectar e reportar
+              setReaderInputsCb?.({ readerBroken: false });
+            }
+          },
+        })
+      : null;
+
+    // ── Observer de conversa + mensagens ──────────────────────────────────
+    let observersStarted = false;
+
+    function startObservers(): void {
+      if (observersStarted) return;
+      observersStarted = true;
+      startConversationObserver({
+        onExtraction: ({ messages, signals }) => {
+          currentCanary = signals.canary;
+
+          // Atualizar estado do chat ativo para o contexto da fila
+          if (signals.activeChat) {
+            currentWaChatId = signals.activeChat.chatId;
+            currentContactName = signals.activeChat.contactName;
+          }
+
+          // Construir ReaderSignals para o adapter
+          const readerSignals: ReaderSignals = {
+            session,
+            profileRemoved,
+            waConnected: signals.waConnected,
+            activeChat: signals.activeChat,
+            canary: signals.canary,
+            killSwitch: false, // será sobrescrito pelo próximo ciclo do healthCycle
+          };
+
+          const readerInputs = signalsToReaderInputs(readerSignals);
+          setReaderInputsCb?.(readerInputs);
+
+          // Enfileirar mensagens (apenas conversas individuais — grupos filtrados
+          // pelo activeChat.isGroup no resolveView via store; a fila recebe tudo
+          // e o banco rejeita grupos via check constraint se necessário)
+          if (
+            messages.length > 0 &&
+            signals.activeChat &&
+            !signals.activeChat.isGroup &&
+            queue
+          ) {
+            queue.enqueue(messages);
+          }
+        },
+        onError: (err) => {
+          // Pitfall 3: nunca engolir — reportar estado de quebra
+          console.error("[copiloto/observer] Erro:", err);
+          setReaderInputsCb?.({ readerBroken: true });
+        },
+      });
+    }
+
+    function pauseObservers(): void {
+      if (!observersStarted) return;
+      observersStarted = false;
+      stopAllObservers();
+    }
+
+    // ── Kill-switch + heartbeat (healthCycle) ─────────────────────────────
+    if (session && !profileRemoved) {
+      startHealthCycle({
+        client,
+        profileId: session.user.id,
+        organizationId:
+          (session.user.user_metadata as { organization_id?: string })
+            ?.organization_id ?? "",
+        getCanaryStatus: () => currentCanary,
+        getExtensionVersion: () => {
+          try {
+            return browser.runtime.getManifest().version;
+          } catch {
+            return "0.0.0";
+          }
+        },
+        onSignals: ({ killSwitch, canary }) => {
+          currentCanary = canary;
+
+          // Atualizar o kill-switch no store
+          setReaderInputsCb?.({ killSwitchActive: killSwitch });
+
+          if (killSwitch || canary === "broken") {
+            // Parar observers quando kill-switch ou quebra permanente
+            pauseObservers();
+          } else if (!killSwitch && !profileRemoved) {
+            // Retomar observers quando a flag volta a true (D-15)
+            startObservers();
+          }
+        },
+        onError: (err) => {
+          // Pitfall 3: nunca engolir
+          console.error("[copiloto/health] Erro:", err.kind);
+          if (err.kind === "auth") {
+            // Sessão expirada: verificar remoção
+            void checkProfileStatus(session.user.id).then((profile) => {
+              if (profile.kind === "removed") {
+                profileRemoved = true;
+                markRemovedCb?.();
+                pauseObservers();
+                stopHealthCycle();
+              }
+            });
+          }
+        },
+      });
+
+      // Iniciar observers imediatamente (antes do primeiro ciclo do healthCycle)
+      startObservers();
+    }
+
+    // ── Cleanup ao invalidar o contexto ───────────────────────────────────
+    ctx.onInvalidated(() => {
+      pauseObservers();
+      stopHealthCycle();
+    });
 
     const ui = await createShadowRootUi(ctx, {
       name: "copiloto-panel",
@@ -135,6 +293,12 @@ export default defineContentScript({
             initialCollapsed={collapsed}
             onCollapsedChange={handleCollapsedChange}
             onForgotPassword={openPasswordRecovery}
+            onSetReaderInputsRef={(fn) => {
+              setReaderInputsCb = fn;
+            }}
+            onMarkRemovedRef={(fn) => {
+              markRemovedCb = fn;
+            }}
           >
             <App />
           </PanelProvider>,
@@ -142,6 +306,9 @@ export default defineContentScript({
         return reactRoot;
       },
       onRemove(reactRoot) {
+        // D-11: logout/remoção param imediatamente
+        pauseObservers();
+        stopHealthCycle();
         reactRoot?.unmount();
       },
     });

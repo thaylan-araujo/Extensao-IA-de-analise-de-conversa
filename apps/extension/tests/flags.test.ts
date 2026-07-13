@@ -46,8 +46,9 @@ function makeClient({
     status: statusError ? 500 : 200,
   });
 
+  // .single() returns a single row object, not an array
   const settingsSelect = vi.fn().mockResolvedValue({
-    data: settingsError ? null : [{ key: "reader_enabled", value: readerEnabled }],
+    data: settingsError ? null : { key: "reader_enabled", value: readerEnabled },
     error: settingsError ?? null,
     status: settingsError ? (settingsStatus || 500) : 200,
   });
@@ -225,14 +226,15 @@ describe("startHealthCycle — kill-switch + heartbeat + recuperação automáti
   // ──────────────────────────────────────────────
   it("flag reader_enabled volta de false para true → onSignals com killSwitch false (D-15: retomada sem ação do advogado)", async () => {
     let readerEnabled = false;
+    // .single() returns a single object (not array)
     const settingsSelect = vi.fn()
       .mockResolvedValueOnce({
-        data: [{ key: "reader_enabled", value: false }],
+        data: { key: "reader_enabled", value: false },
         error: null,
         status: 200,
       })
       .mockResolvedValue({
-        data: [{ key: "reader_enabled", value: true }],
+        data: { key: "reader_enabled", value: true },
         error: null,
         status: 200,
       });

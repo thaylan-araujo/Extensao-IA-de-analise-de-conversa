@@ -11,7 +11,9 @@ import {
   createElement,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -111,6 +113,17 @@ export interface PanelProviderProps {
   onCollapsedChange?: (collapsed: boolean) => void;
   /** Abre o fluxo web da Fase 1 (recuperar-senha) — injetado pelo index.tsx. */
   onForgotPassword?: () => void;
+  /**
+   * Callback de wiring (02-06): entrega ao chamador (index.tsx) a referência ao
+   * setReaderInputs interno, para que observers e healthCycle possam alimentar
+   * o store sem um import circular (observer → store → observer).
+   */
+  onSetReaderInputsRef?: (fn: (partial: Partial<ReaderInputs>) => void) => void;
+  /**
+   * Callback de wiring (02-06): entrega ao chamador a referência ao markRemoved,
+   * para que o healthCycle sinalize remoção do advogado (D-11) sem import circular.
+   */
+  onMarkRemovedRef?: (fn: () => void) => void;
   children: ReactNode;
 }
 
@@ -129,6 +142,8 @@ export function PanelProvider({
   initialCollapsed = false,
   onCollapsedChange,
   onForgotPassword,
+  onSetReaderInputsRef,
+  onMarkRemovedRef,
   children,
 }: PanelProviderProps) {
   const [session, setSessionState] = useState<Session | null>(initialSession);
@@ -168,6 +183,19 @@ export function PanelProvider({
   const forgotPassword = useCallback(() => {
     onForgotPassword?.();
   }, [onForgotPassword]);
+
+  // Wiring de 02-06: expor setReaderInputs e markRemoved ao index.tsx via ref
+  // callbacks. Isso evita import circular (observers→store→observers) e mantém
+  // a comunicação fora do ciclo React (D-04: observers não precisam saber do
+  // estado do painel).
+  const onSetReaderInputsRefRef = useRef(onSetReaderInputsRef);
+  const onMarkRemovedRefRef = useRef(onMarkRemovedRef);
+  useEffect(() => {
+    onSetReaderInputsRefRef.current?.(setReaderInputs);
+  }, [setReaderInputs]);
+  useEffect(() => {
+    onMarkRemovedRefRef.current?.(markRemoved);
+  }, [markRemoved]);
 
   const view = resolveView({
     bootLoading: false,
