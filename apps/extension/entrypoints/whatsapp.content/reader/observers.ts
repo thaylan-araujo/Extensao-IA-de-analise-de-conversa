@@ -208,8 +208,8 @@ export function startConversationObserver(options: ObserverOptions): void {
     return;
   }
 
-  // Observer de conversa: alvo estreito (appRoot), childList raso
-  // Detecta quando o #main é adicionado/removido/substituído
+  // Observer de conversa: detecta quando #main é adicionado/removido/substituído.
+  // Alvo determinado dinamicamente abaixo (pai de #main ou #app).
   conversationObserver = new MutationObserver(() => {
     try {
       const main = resolveWithFallback(root, "main");
@@ -253,12 +253,21 @@ export function startConversationObserver(options: ObserverOptions): void {
     }
   });
 
-  // Observar o container do app (appRoot) com childList raso
-  // O #main é filho direto do #app — sem subtree profundo (anti-padrão EXT-07)
-  conversationObserver.observe(appRoot.element, { childList: true, subtree: false });
-
   // Verificar imediatamente se já há uma conversa aberta
   const main = resolveWithFallback(root, "main");
+
+  // Observar o pai DIRETO do #main (não necessariamente #app).
+  // Em versões recentes do WhatsApp Web, #main não é filho direto de #app —
+  // há um div intermediário. Observar o pai real garante que o observer dispare
+  // quando #main é substituído ao trocar de conversa.
+  // Se #main ainda não existe (tela de QR/loading), observamos #app com subtree
+  // como one-shot até #main aparecer — descontinuado assim que #main é encontrado.
+  const observationTarget = main
+    ? (main.element.parentElement ?? appRoot.element)
+    : appRoot.element;
+  const useSubtree = !main; // subtree só enquanto #main não existe
+  conversationObserver.observe(observationTarget, { childList: true, subtree: useSubtree });
+
   if (main) {
     const isGroup = resolveIsGroup(main.element);
     const contactName = resolveContactName(main.element);

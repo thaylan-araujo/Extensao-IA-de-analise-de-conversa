@@ -10,7 +10,7 @@ import {
 import { PanelProvider, type ReaderInputs } from "./panel/store";
 import { getExtensionEnv } from "./sync/env";
 import { checkProfileStatus, restoreSession } from "./sync/session";
-import { createExtensionClient } from "./sync/supabase";
+import { supabase } from "./sync/supabase";
 import { startHealthCycle, stopHealthCycle } from "./sync/flags";
 import { createSyncQueue } from "./sync/queue";
 import { startConversationObserver, stopAllObservers } from "./reader/observers";
@@ -141,8 +141,10 @@ export default defineContentScript({
     // Estado do canário compartilhado entre observers e healthCycle
     let currentCanary: CanaryVerdict = "disconnected";
 
-    // ── Cliente Supabase (injetado para facilitar testes se necessário) ───
-    const client = createExtensionClient();
+    // ── Cliente Supabase singleton ─────────────────────────────────────────
+    // Reutiliza o singleton de supabase.ts — evita múltiplas instâncias de
+    // GoTrueClient competindo pela mesma chave de storage (bug detectado no E2E).
+    const client = supabase;
 
     // ── Fila de sincronização ─────────────────────────────────────────────
     let currentWaChatId = "";
@@ -268,8 +270,11 @@ export default defineContentScript({
         },
       });
 
-      // Iniciar observers imediatamente (antes do primeiro ciclo do healthCycle)
-      startObservers();
+      // Observers são iniciados via onSetReaderInputsRef (abaixo), garantindo
+      // que setReaderInputsCb esteja pronto antes da primeira extração disparar.
+      // Chamar startObservers() aqui criaria uma race condition: o requestIdleCallback
+      // da extração inicial poderia disparar antes do useEffect do PanelProvider
+      // definir setReaderInputsCb, perdendo silenciosamente a atualização.
     }
 
     // ── Cleanup ao invalidar o contexto ───────────────────────────────────
@@ -295,6 +300,11 @@ export default defineContentScript({
             onForgotPassword={openPasswordRecovery}
             onSetReaderInputsRef={(fn) => {
               setReaderInputsCb = fn;
+              // Ponto garantido: setReaderInputsCb está pronto. Iniciar observers
+              // agora evita a race condition com o requestIdleCallback da extração.
+              if (session && !profileRemoved) {
+                startObservers();
+              }
             }}
             onMarkRemovedRef={(fn) => {
               markRemovedCb = fn;
