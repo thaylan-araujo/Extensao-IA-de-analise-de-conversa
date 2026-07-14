@@ -10,7 +10,7 @@ import { CollapsedTab } from "./CollapsedTab";
 import { usePanel } from "./store";
 
 /** Constantes de layout do 02-UI-SPEC.md — também usadas pela reserva de largura. */
-export const PANEL_WIDTH_EXPANDED = 360;
+export const PANEL_WIDTH_EXPANDED = 300;
 export const PANEL_WIDTH_COLLAPSED = 40;
 
 export function PanelShell({ children }: { children: ReactNode }) {

@@ -32,11 +32,6 @@ function Header() {
         <span className="text-base font-semibold text-zinc-950">
           Copiloto Jurídico
         </span>
-        {session?.user.email ? (
-          <span className="truncate text-xs text-zinc-600">
-            {session.user.email}
-          </span>
-        ) : null}
       </div>
       <button
         aria-label="Recolher painel"

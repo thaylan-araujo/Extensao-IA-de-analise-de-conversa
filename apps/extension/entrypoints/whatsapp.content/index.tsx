@@ -50,7 +50,7 @@ function waitForWhatsAppRoot(ctx: ContentScriptContext): Promise<HTMLElement | n
 async function readPanelOpen(): Promise<boolean> {
   const result = await chrome.storage.local.get(PANEL_OPEN_KEY);
   const value = result[PANEL_OPEN_KEY];
-  return typeof value === "boolean" ? value : true;
+  return typeof value === "boolean" ? value : false;
 }
 
 function persistPanelOpen(open: boolean): void {
@@ -69,11 +69,13 @@ function persistPanelOpen(open: boolean): void {
  */
 function applyWidthReservation(waRoot: HTMLElement, collapsed: boolean): void {
   const width = collapsed ? PANEL_WIDTH_COLLAPSED : PANEL_WIDTH_EXPANDED;
-  waRoot.style.marginRight = `${width}px`;
+  waRoot.style.width = `calc(100vw - ${width}px)`;
+  waRoot.style.maxWidth = `calc(100vw - ${width}px)`;
 }
 
 function clearWidthReservation(waRoot: HTMLElement): void {
-  waRoot.style.marginRight = "";
+  waRoot.style.width = "";
+  waRoot.style.maxWidth = "";
 }
 
 /**
